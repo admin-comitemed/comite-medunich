@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Virtual 3.0 - Comité Medicina UNICH</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #003366; /* Azul Institucional */
+            --accent-color: #d4af37; /* Dorado */
+            --bg-light: #f8f9fa;
+            --text-main: #212529;
+            --card-bg: #ffffff;
+        }
+
+        /* MODO GUARDIA (DARK MODE) */
+        [data-theme="dark"] {
+            --primary-color: #001f3f;
+            --bg-light: #121212;
+            --text-main: #e0e0e0;
+            --card-bg: #1e1e1e;
+        }
+        
+        /* Ajustes globales para dark mode */
+        [data-theme="dark"] .modal-content { background-color: #1e1e1e; color: #fff; }
+        [data-theme="dark"] .form-control { background-color: #2d2d2d; border-color: #444; color: #fff; }
+        [data-theme="dark"] .list-group-item { background-color: #1e1e1e; color: #fff; border-color: #333; }
+        [data-theme="dark"] .modal-header { border-bottom-color: #333; }
+        [data-theme="dark"] .border-top { border-top-color: #333 !important; }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            font-family: 'Segoe UI', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Navbar */
+        .navbar-custom {
+            background-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .president-tag {
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            border-left: 1px solid rgba(255,255,255,0.3);
+            padding-left: 10px;
+            margin-left: 10px;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #00509e 100%);
+            color: white;
+            padding: 2.5rem 0;
+            border-bottom-right-radius: 40px;
+            border-bottom-left-radius: 40px;
+            margin-bottom: 2rem;
+        }
+
+        /* Tarjetas */
+        .card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-3px); }
+        .text-muted { color: #6c757d !important; }
+        [data-theme="dark"] .text-muted { color: #adb5bd !important; }
+
+        /* Pestañas */
+        .nav-pills .nav-link {
+            color: var(--text-main);
+            border-radius: 20px;
+            padding: 8px 20px;
+            margin-right: 10px;
+            font-weight: 600;
+        }
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Botón Flotante (FAB) */
+        .fab-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--accent-color);
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .fab-btn:hover { transform: scale(1.1); }
+
+        /* Sidebar Title */
+        .sidebar-title { 
+            font-size: 0.9rem; font-weight: 700; text-transform: uppercase; 
+            letter-spacing: 1px; color: var(--text-main); opacity: 0.7;
+            margin-bottom: 10px; border-bottom: 2px solid var(--accent-color);
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-custom navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-university me-2"></i> COMITÉ MEDICINA
+                <span class="president-tag">Gestión 2025-2026</span>
+            </a>
+            
+            <div class="d-flex align-items-center">
+                <div class="form-check form-switch me-3 d-none d-md-block">
+                    <input class="form-check-input" type="checkbox" id="darkModeSwitch" onclick="toggleTheme()">
+                    <label class="form-check-label text-white small" for="darkModeSwitch"><i class="fas fa-moon"></i></label>
+                </div>
+                
+                <button onclick="abrirIA()" class="btn btn-sm btn-warning text-dark fw-bold rounded-pill me-2 animate__animated animate__pulse">
+                    <i class="fas fa-robot"></i> Dr. Athlon
+                </button>
+
+                <a href="#" class="btn btn-sm btn-outline-light rounded-pill">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section text-center">
+        <div class="container">
+            <h3 class="fw-bold mb-2">Centro de Recursos Académicos</h3>
+            <div class="row justify-content-center mt-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text border-0"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control border-0" id="searchInput" placeholder="Buscar libro (Ej: Guyton, Pediatría)..." onkeyup="filterBooks()">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mb-5">
+        <div class="row">
+            
+            <div class="col-lg-9">
+                <ul class="nav nav-pills mb-4" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation"><button class="nav-link active" id="pills-libros-tab" data-bs-toggle="pill" data-bs-target="#pills-libros" type="button"><i class="fas fa-book me-2"></i>Biblioteca</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link" id="pills-tools-tab" data-bs-toggle="pill" data-bs-target="#pills-tools" type="button"><i class="fas fa-calculator me-2"></i>Herramientas</button></li>
+                    <li class="nav-item" role="presentation"><button class="nav-link" id="pills-cultura-tab" data-bs-toggle="pill" data-bs-target="#pills-cultura" type="button"><i class="fas fa-leaf me-2"></i>Intercultural</button></li>
+                </ul>
+
+                <div class="tab-content" id="pills-tabContent">
+                    
+                    <div class="tab-pane fade show active" id="pills-libros">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold text-secondary">📚 Libros Disponibles</h5>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary rounded-pill me-1" onclick="setSearch('Pediatría')">Pediatría</button>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="setSearch('ENARM')">ENARM</button>
+                            </div>
+                        </div>
+                        <div class="row g-3" id="bookGrid">
+                            </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-tools">
+                        <h5 class="fw-bold text-secondary mb-3">🧮 Utilidades Clínicas</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card p-3">
+                                    <h6 class="fw-bold"><i class="fas fa-baby me-2 text-primary"></i>Dosis Pediátrica</h6>
+                                    <p class="small text-muted">Calculadora rápida kg/dosis.</p>
+                                    <a href="#" class="btn btn-sm btn-light stretched-link">Abrir</a>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card p-3">
+                                    <h6 class="fw-bold"><i class="fas fa-file-medical me-2 text-danger"></i>NOMs Esenciales</h6>
+                                    <p class="small text-muted">Acceso directo a Normas Oficiales.</p>
+                                    <a href="#" class="btn btn-sm btn-light stretched-link">Ver Lista</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="pills-cultura">
+                        <div class="card bg-success text-white mb-3">
+                            <div class="card-body">
+                                <h5 class="fw-bold"><i class="fas fa-users me-2"></i>Módulo Intercultural UNICH</h5>
+                                <p class="small mb-0">Medicina respetuosa con los usos y costumbres de Chiapas.</p>
+                            </div>
+                        </div>
+                        <div class="list-group">
+                            <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-language me-2"></i>Diccionario Médico Tzotzil</a>
+                            <a href="#" class="list-group-item list-group-item-action"><i class="fas fa-hand-holding-heart me-2"></i>Guía de Parto Humanizado</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3">
+                <div class="card p-3 mb-4"><div class="d-flex align-items-center"><div class="bg-light rounded-circle p-2 text-center" style="width: 40px; height: 40px;"><i class="fas fa-user"></i></div><div class="ms-2"><h6 class="mb-0 fw-bold">Estudiante</h6><a href="#" class="small text-decoration-none">Mi Perfil</a></div></div></div>
+                
+                <div class="mb-4">
+                    <span class="sidebar-title">Marco Institucional</span>
+                    <div class="list-group list-group-flush card">
+                        <a href="#" class="list-group-item list-group-item-action small"><i class="fas fa-gavel me-2"></i>Reglamento</a>
+                        <a href="#" class="list-group-item list-group-item-action small text-primary fw-bold"><i class="fas fa-bullhorn me-2"></i>Avisos Rectoría</a>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <span class="sidebar-title">San Cris Vital</span>
+                    <div class="card p-2">
+                        <ul class="list-unstyled mb-0 small">
+                            <li class="mb-2 border-bottom pb-1">🌮 Tacos (24h): 967-123-4567</li>
+                            <li>💊 Farmacia Guardia: Centro</li>
+                            <li>🎼 <a href="#" class="text-success text-decoration-none fw-bold">Playlist Guardia (Spotify)</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fab-btn" title="Buzón" onclick="alert('Aquí abriría el Formulario de Peticiones')">
+        <i class="fas fa-envelope-open-text"></i>
+    </div>
+
+    <div class="modal fade" id="iaModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="fas fa-robot me-2 text-warning"></i>Dr. Athlon (IA)</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div id="chatHistory" class="p-3 bg-light" style="height: 350px; overflow-y: auto;">
+                        <div class="d-flex align-items-start mb-3">
+                            <div class="bg-dark text-white rounded-circle p-2 me-2"><i class="fas fa-robot"></i></div>
+                            <div class="bg-white p-2 rounded shadow-sm text-dark">
+                                Hola. Soy tu asistente académico basado en Gemini AI. ¿En qué te ayudo hoy?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3 border-top bg-white">
+                        <div class="d-flex gap-2 mb-2 justify-content-center">
+                            <input type="radio" class="btn-check" name="aiModel" id="modeTutor" checked>
+                            <label class="btn btn-outline-primary btn-sm py-0" for="modeTutor">👨‍🏫 Tutor</label>
+                            <input type="radio" class="btn-check" name="aiModel" id="modeClinic">
+                            <label class="btn btn-outline-success btn-sm py-0" for="modeClinic">🏥 Clínico</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="iaQuery" class="form-control" placeholder="Escribe tu duda..." onkeypress="if(event.key === 'Enter') consultarIAReal()">
+                            <button class="btn btn-primary" onclick="consultarIAReal()"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                        <small class="text-muted d-block text-center mt-1" style="font-size: 0.7rem;">Powered by Gemini 1.5 Flash</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ==========================================
+        //  CONFIGURACIÓN DE IA (Llave Integrada)
+        // ==========================================
+        const API_KEY = "AIzaSyAMRvpzKpG1oata_aiRHn9cENQ_E2OHdMk"; 
+        // ==========================================
+
+        // BASE DE DATOS DE LIBROS (Ejemplo - Agregue aquí sus links reales)
+        const libros = [
+            { titulo: "Nelson. Tratado de Pediatría", autor: "Edición 21 • Kliegman", tag: "Clínicas", clase: "bg-success", link: "#", busqueda: "pediatria nelson" },
+            { titulo: "Manuales CTO Desglose", autor: "6ta Edición • Interna", tag: "ENARM", clase: "bg-danger", link: "#", busqueda: "enarm cto interna" },
+            { titulo: "Anatomía de Quiroz", autor: "Tomos 1-3", tag: "Básicas", clase: "bg-primary", link: "#", busqueda: "anatomia quiroz" },
+            { titulo: "Harrison Medicina Interna", autor: "Edición 20", tag: "Clínicas", clase: "bg-success", link: "#", busqueda: "harrison interna" }
+        ];
+
+        // CARGAR LIBROS AL INICIAR
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('bookGrid');
+            libros.forEach(libro => {
+                grid.innerHTML += `
+                <div class="col-md-6 col-lg-4 book-item" data-search="${libro.busqueda}">
+                    <div class="card p-3 h-100">
+                        <span class="badge ${libro.clase} w-auto mb-2 align-self-start">${libro.tag}</span>
+                        <h6 class="fw-bold mb-1">${libro.titulo}</h6>
+                        <p class="small text-muted mb-3">${libro.autor}</p>
+                        <a href="${libro.link}" class="btn btn-sm btn-outline-dark mt-auto w-100">Descargar</a>
+                    </div>
+                </div>`;
+            });
+            // Tarjeta Comunidad
+            grid.innerHTML += `
+            <div class="col-md-6 col-lg-4">
+                <div class="card p-3 h-100 border-warning" style="background-color:#fffbf2;">
+                    <span class="badge bg-warning text-dark w-auto mb-2">Comunidad</span>
+                    <h6 class="fw-bold">¡Sube tus Aportes!</h6>
+                    <p class="small text-muted mb-3">Comparte conocimiento.</p>
+                    <a href="#" class="btn btn-sm btn-warning w-100 mt-auto fw-bold">Subir Archivo</a>
+                </div>
+            </div>`;
+
+            // Verificar tema guardado
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                document.getElementById('darkModeSwitch').checked = true;
+            }
+        });
+
+        // LOGICA DE BUSCADOR
+        function filterBooks() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let items = document.getElementsByClassName('book-item');
+            for(let item of items) {
+                let text = item.getAttribute('data-search');
+                item.parentElement.style.display = text.includes(input) ? "" : "none";
+            }
+        }
+        function setSearch(t) { document.getElementById('searchInput').value = t; filterBooks(); }
+
+        // LOGICA MODO GUARDIA
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+
+        // FUNCIONES DE IA (DR. ATHLON)
+        function abrirIA() { new bootstrap.Modal(document.getElementById('iaModal')).show(); }
+
+        async function consultarIAReal() {
+            const input = document.getElementById('iaQuery');
+            const chatBox = document.getElementById('chatHistory');
+            const pregunta = input.value.trim();
+            if (!pregunta) return;
+
+            // Mostrar pregunta usuario
+            chatBox.innerHTML += `<div class="d-flex justify-content-end mb-3 animate__animated animate__fadeIn"><div class="bg-primary text-white p-2 rounded shadow-sm" style="max-width:85%">${pregunta}</div></div>`;
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Prompt Maestro
+            const esClinico = document.getElementById('modeClinic').checked;
+            const context = esClinico 
+                ? "Actúa como un médico especialista senior. Eres conciso, usas terminología técnica exacta y citas Normas Oficiales Mexicanas (NOM) o GPC si aplica. No des explicaciones básicas." 
+                : "Actúa como un tutor académico de medicina para estudiantes universitarios. Explica de forma clara, didáctica y usa analogías. Sé motivador y empático.";
+
+            // Indicador de carga
+            const loadId = "load"+Date.now();
+            chatBox.innerHTML += `<div id="${loadId}" class="d-flex mb-3"><div class="bg-dark text-white rounded-circle p-2 me-2"><i class="fas fa-robot"></i></div><div class="bg-white p-2 rounded text-muted"><i class="fas fa-circle-notch fa-spin"></i> Consultando...</div></div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                // Llamada a Gemini 1.5 Flash
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: context + "\n\nPregunta del estudiante: " + pregunta }] }] })
+                });
+                
+                const data = await response.json();
+                document.getElementById(loadId).remove();
+                
+                if(data.candidates) {
+                    // Formateo básico de Markdown a HTML
+                    let txt = data.candidates[0].content.parts[0].text
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\n/g, '<br>');
+                    
+                    chatBox.innerHTML += `<div class="d-flex mb-3 animate__animated animate__fadeIn"><div class="bg-dark text-white rounded-circle p-2 me-2"><i class="fas fa-robot"></i></div><div class="bg-white p-2 rounded shadow-sm" style="max-width:90%">${txt}</div></div>`;
+                }
+            } catch (e) {
+                document.getElementById(loadId).innerHTML = "<span class='text-danger'>Error de conexión. Verifica tu internet.</span>";
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
