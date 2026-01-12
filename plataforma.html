@@ -12,20 +12,24 @@
         :root { --primary: #003366; --accent: #d4af37; --bg: #f4f6f9; }
         body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; }
         
-        /* LOGIN VIEW */
+        /* ESTILOS BASE (Preservados) */
         #login-view { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--primary) 0%, #001f3f 100%); padding: 20px; }
         .login-card { background: white; padding: 2.5rem; border-radius: 15px; width: 100%; max-width: 450px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
-        
-        /* APP VIEW */
         #app-view { display: none; }
         .navbar-custom { background-color: var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .student-card { background: linear-gradient(to right, #003366, #004080); color: white; border-radius: 15px; padding: 25px; position: relative; overflow: hidden; }
         
-        /* BOTÓN FLOTANTE SUBIR */
-        .upload-btn { position: fixed; bottom: 30px; right: 30px; border-radius: 50%; width: 60px; height: 60px; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 1000; transition: transform 0.3s; }
-        .upload-btn:hover { transform: scale(1.1); }
+        /* NUEVOS ESTILOS PARA HERRAMIENTAS */
+        .tool-card { transition: transform 0.2s; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .tool-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .result-box { background-color: #e8f4fd; border-left: 4px solid var(--primary); padding: 15px; border-radius: 5px; display: none; }
+        
+        /* PREGUNTA DEL DÍA */
+        .quiz-card { background: linear-gradient(45deg, #8A1538, #a31e45); color: white; }
+        .quiz-option { cursor: pointer; background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 5px; border-radius: 5px; transition: background 0.3s; }
+        .quiz-option:hover { background: rgba(255,255,255,0.3); }
 
-        /* CHAT IA */
+        /* CHAT IA & BOTONES */
         .chat-msg-user { text-align: right; margin-bottom: 10px; }
         .chat-msg-user span { background-color: var(--primary); color: white; padding: 8px 12px; border-radius: 15px 15px 0 15px; display: inline-block; }
         .chat-msg-ai { text-align: left; margin-bottom: 10px; }
@@ -41,7 +45,6 @@
                 <h3 class="fw-bold text-dark">Acceso Alumnos</h3>
                 <p class="text-muted small">Plataforma Oficial del Comité</p>
             </div>
-
             <form id="formLogin" onsubmit="event.preventDefault(); login();">
                 <div class="form-floating mb-3">
                     <input type="email" id="email" class="form-control" placeholder="nombre@ejemplo.com" required>
@@ -57,11 +60,9 @@
                     <a href="#" onclick="toggleRegister()" class="text-decoration-none small fw-bold">Crear cuenta nueva</a>
                 </div>
             </form>
-
             <form id="formRegister" style="display:none;" onsubmit="event.preventDefault(); registrar();">
                 <h5 class="fw-bold mb-3 text-center">Registro de Nuevo Ingreso</h5>
                 <div class="mb-2"><input type="text" id="regName" class="form-control" placeholder="Nombre Completo (Dr./Dra.)" required></div>
-                
                 <div class="mb-2">
                     <select id="regSemestre" class="form-select" required>
                         <option value="" disabled selected>Selecciona tu Grado</option>
@@ -75,18 +76,15 @@
                         <option value="8">8vo Semestre</option>
                         <option value="9">9no Semestre</option>
                         <option value="10">10mo Semestre</option>
-                        <option value="Internado">Internado Médico de Pregrado</option>
+                        <option value="Internado">Internado Médico</option>
                         <option value="Servicio">Servicio Social</option>
                     </select>
                 </div>
-                
                 <div class="mb-2"><input type="email" id="regEmail" class="form-control" placeholder="Correo electrónico" required></div>
-                <div class="mb-3"><input type="password" id="regPass" class="form-control" placeholder="Crear Contraseña (Min 6 car.)" required></div>
-                
+                <div class="mb-3"><input type="password" id="regPass" class="form-control" placeholder="Crear Contraseña" required></div>
                 <button type="submit" class="btn btn-success w-100 fw-bold">REGISTRARME</button>
                 <div class="text-center mt-3"><a href="#" onclick="toggleRegister()" class="small text-muted">Cancelar</a></div>
             </form>
-            
             <div id="loginError" class="alert alert-danger mt-3 small d-none text-center"></div>
         </div>
     </div>
@@ -117,36 +115,140 @@
             </div>
 
             <ul class="nav nav-tabs nav-justified mb-4" id="myTab" role="tablist">
-                <li class="nav-item"><button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#biblioteca"><i class="fas fa-book me-2"></i>Biblioteca</button></li>
-                <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#calculadoras"><i class="fas fa-calculator me-2"></i>Calculadoras</button></li>
-                <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#apuntes" onclick="cargarAportes()"><i class="fas fa-users me-2"></i>Comunidad</button></li>
+                <li class="nav-item"><button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#tab-biblio"><i class="fas fa-book me-2"></i>Biblioteca</button></li>
+                <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tab-clinica"><i class="fas fa-heartbeat me-2"></i>Clínica</button></li>
+                <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tab-inter"><i class="fas fa-users me-2"></i>Intercultural</button></li>
+                <li class="nav-item"><button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#tab-comunidad" onclick="cargarAportes()"><i class="fas fa-pencil-alt me-2"></i>Apuntes</button></li>
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane fade show active" id="biblioteca">
-                    <div class="alert alert-info border-0 shadow-sm"><i class="fas fa-info-circle me-2"></i>Libros base seleccionados por el Comité.</div>
+                
+                <div class="tab-pane fade show active" id="tab-biblio">
+                    <h5 class="mb-3 border-bottom pb-2"><i class="fas fa-bookmark text-warning me-2"></i>Mis Libros Favoritos</h5>
+                    <div class="alert alert-light border shadow-sm text-center py-3">
+                        <small class="text-muted">Aún no has guardado libros favoritos. Explora la biblioteca para añadir.</small>
+                    </div>
+
+                    <h5 class="mb-3 border-bottom pb-2 mt-4"><i class="fas fa-book-medical text-primary me-2"></i>Biblioteca Oficial</h5>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="card p-3 h-100 shadow-sm border-0">
+                            <div class="card p-3 h-100 shadow-sm border-0 tool-card">
                                 <h6 class="fw-bold">Nelson. Tratado de Pediatría</h6>
-                                <p class="small text-muted">21ª Edición. Referencia obligatoria.</p>
-                                <button class="btn btn-sm btn-outline-primary mt-auto w-100">Descargar PDF</button>
+                                <p class="small text-muted mb-2">21ª Edición. Referencia obligatoria.</p>
+                                <button class="btn btn-sm btn-outline-primary mt-auto w-100">Abrir Recurso</button>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card p-3 h-100 shadow-sm border-0 tool-card">
+                                <h6 class="fw-bold">Harrison. Medicina Interna</h6>
+                                <p class="small text-muted mb-2">Principios de Medicina Interna.</p>
+                                <button class="btn btn-sm btn-outline-primary mt-auto w-100">Abrir Recurso</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3 border-bottom pb-2 mt-4"><i class="fas fa-file-contract text-secondary me-2"></i>Formatos Oficiales</h5>
+                    <div class="list-group">
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div><i class="fas fa-file-pdf text-danger me-2"></i>Formato de Justificante Médico</div>
+                            <span class="badge bg-light text-dark"><i class="fas fa-download"></i></span>
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div><i class="fas fa-file-word text-primary me-2"></i>Logos Oficiales para Diapositivas</div>
+                            <span class="badge bg-light text-dark"><i class="fas fa-download"></i></span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="tab-clinica">
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="card quiz-card shadow border-0 p-3">
+                                <h6 class="fw-bold"><i class="fas fa-fire me-2"></i>Pregunta ENARM del Día</h6>
+                                <p class="small mb-2">Paciente de 5 años con fiebre de 5 días, inyección conjuntival y lengua en fresa. Diagnóstico más probable:</p>
+                                <div class="quiz-option" onclick="alert('❌ Incorrecto. El sarampión presenta manchas de Koplik.')">A) Sarampión</div>
+                                <div class="quiz-option" onclick="alert('✅ ¡Correcto! Es Kawasaki. Riesgo de aneurismas coronarios.')">B) Enfermedad de Kawasaki</div>
+                                <div class="quiz-option" onclick="alert('❌ Incorrecto. La escarlatina suele tener faringoamigdalitis purulenta.')">C) Escarlatina</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card p-3 h-100 shadow-sm border-0">
+                                <h6 class="fw-bold text-primary"><i class="fas fa-calculator me-2"></i>Dosis Pediátricas</h6>
+                                <div class="mb-2">
+                                    <label class="small text-muted">Peso del Paciente (kg)</label>
+                                    <input type="number" id="pesoCalc" class="form-control" placeholder="Ej: 15">
+                                </div>
+                                <button class="btn btn-primary btn-sm w-100 mb-3" onclick="calcularDosis()">Calcular</button>
+                                
+                                <div id="resDosis" class="result-box small">
+                                    <strong>Paracetamol (10-15mg/kg):</strong><br>
+                                    <span id="dosisPara">...</span> mg<br>
+                                    <strong>Ibuprofeno (5-10mg/kg):</strong><br>
+                                    <span id="dosisIbu">...</span> mg
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card p-3 h-100 shadow-sm border-0">
+                                <h6 class="fw-bold text-success"><i class="fas fa-ruler-combined me-2"></i>Escalas Médicas</h6>
+                                <p class="small text-muted">Accesos rápidos:</p>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-secondary btn-sm text-start" onclick="alert('Glasgow: Ocular(4)+Verbal(5)+Motora(6)')"><i class="fas fa-brain me-2"></i>Escala de Glasgow</button>
+                                    <button class="btn btn-outline-secondary btn-sm text-start" onclick="alert('Apgar: Apariencia, Pulso, Gesto, Actividad, Respiración')"><i class="fas fa-baby me-2"></i>Test de APGAR</button>
+                                    <button class="btn btn-outline-secondary btn-sm text-start" onclick="alert('Silverman: Quejido, Aleteo, Retracción, etc.')"><i class="fas fa-lungs me-2"></i>Silverman-Andersen</button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="calculadoras">
-                    <div class="text-center py-5">
-                        <i class="fas fa-tools fa-3x text-muted mb-3"></i>
-                        <h5>Herramientas Clínicas</h5>
-                        <p class="text-muted">Próximamente: Dosis Pediátricas y Escalas.</p>
+                <div class="tab-pane fade" id="tab-inter">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card p-3 shadow-sm border-0 h-100">
+                                <h6 class="fw-bold text-primary"><i class="fas fa-language me-2"></i>Traductor Médico Básico</h6>
+                                <p class="small text-muted">Apoyo para consulta en comunidades (Tsotsil).</p>
+                                <select id="fraseSelect" class="form-select mb-3" onchange="traducir()">
+                                    <option value="" selected>Selecciona una frase...</option>
+                                    <option value="1">Buenos días</option>
+                                    <option value="2">¿Qué le duele?</option>
+                                    <option value="3">Abra la boca</option>
+                                    <option value="4">Respire profundo</option>
+                                    <option value="5">Tome esta medicina</option>
+                                </select>
+                                <div class="alert alert-info text-center fw-bold" id="traduccionBox">
+                                    ...
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card p-3 shadow-sm border-0 h-100">
+                                <h6 class="fw-bold text-success"><i class="fas fa-leaf me-2"></i>Vademécum Fitoterapia</h6>
+                                <div class="accordion accordion-flush" id="acordeonPlantas">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#planta1">Manzanilla (Matriz)</button></h2>
+                                        <div id="planta1" class="accordion-collapse collapse"><div class="accordion-body small">Uso: Dolor estomacal, ansiedad.<br>Dosis: Infusión cada 8 horas.</div></div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#planta2">Jengibre</button></h2>
+                                        <div id="planta2" class="accordion-collapse collapse"><div class="accordion-body small">Uso: Náuseas, mareos.<br>Precaución: No en gastritis severa.</div></div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#planta3">Guayaba (Hoja)</button></h2>
+                                        <div id="planta3" class="accordion-collapse collapse"><div class="accordion-body small">Uso: Diarrea no infecciosa.<br>Preparación: Té de hojas.</div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="apuntes">
+                <div class="tab-pane fade" id="tab-comunidad">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold text-secondary">Material compartido</h5>
+                        <h5 class="fw-bold text-secondary">Aportes de la Comunidad</h5>
                         <button class="btn btn-primary btn-sm rounded-pill" onclick="abrirSubirArchivo()"><i class="fas fa-cloud-upload-alt me-2"></i>Subir Aporte</button>
                     </div>
                     <div id="listaAportes" class="row g-3">
@@ -160,23 +262,12 @@
     <div class="modal fade" id="uploadModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Compartir Conocimiento</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+                <div class="modal-header"><h5 class="modal-title">Subir Material</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <form id="uploadForm" onsubmit="event.preventDefault(); subirArchivo();">
-                        <div class="mb-3">
-                            <label class="form-label">Título</label>
-                            <input type="text" id="fileTitle" class="form-control" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Archivo</label>
-                            <input type="file" id="fileInput" class="form-control" accept=".pdf,.jpg,.png" required>
-                        </div>
-                        <div id="uploadStatus" class="d-none mb-2">
-                            <div class="progress"><div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div></div>
-                        </div>
+                        <div class="mb-3"><input type="text" id="fileTitle" class="form-control" placeholder="Título" required></div>
+                        <div class="mb-3"><input type="file" id="fileInput" class="form-control" accept=".pdf,.jpg" required></div>
+                        <div id="uploadStatus" class="d-none mb-2"><div class="progress"><div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div></div></div>
                         <button type="submit" id="btnSubir" class="btn btn-primary w-100">Publicar</button>
                     </form>
                 </div>
@@ -187,10 +278,7 @@
     <div class="modal fade" id="iaModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title">Dr. Evidence</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
+                <div class="modal-header bg-dark text-white"><h5 class="modal-title">Dr. Evidence</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body bg-light">
                     <div id="chatHistory" class="p-3 mb-3 bg-white rounded shadow-sm" style="height: 350px; overflow-y: auto;"></div>
                     <div class="input-group">
@@ -203,20 +291,13 @@
     </div>
 
     <script type="module">
+        // FIREBASE SETUP (Igual que antes)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBxl7NFNI8lxfmdC-YJYmZ21zQOxQ72-3U",
-            authDomain: "centro-de-recursos-academicos.firebaseapp.com",
-            projectId: "centro-de-recursos-academicos",
-            storageBucket: "centro-de-recursos-academicos.firebasestorage.app",
-            messagingSenderId: "799558207054",
-            appId: "1:799558207054:web:c7bb8f1400a4f2181ee51f",
-            measurementId: "G-GWC94WNY9F"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyBxl7NFNI8lxfmdC-YJYmZ21zQOxQ72-3U", authDomain: "centro-de-recursos-academicos.firebaseapp.com", projectId: "centro-de-recursos-academicos", storageBucket: "centro-de-recursos-academicos.firebasestorage.app", messagingSenderId: "799558207054", appId: "1:799558207054:web:c7bb8f1400a4f2181ee51f", measurementId: "G-GWC94WNY9F" };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -236,98 +317,82 @@
             }
         });
 
-        window.toggleRegister = () => {
-            const l = document.getElementById('formLogin'), r = document.getElementById('formRegister');
-            l.style.display = l.style.display === 'none' ? 'block' : 'none';
-            r.style.display = r.style.display === 'none' ? 'block' : 'none';
-        };
-
-        window.login = async () => {
-            try {
-                await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
-            } catch (e) { showError("Credenciales incorrectas."); }
-        };
-
-        // REGISTRO SIN CAPTCHA (Modificado)
-        window.registrar = async () => {
-            // Se eliminó la verificación de grecaptcha.getResponse() para evitar el error de dominio.
-            try {
-                const cred = await createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, document.getElementById('regPass').value);
-                await setDoc(doc(db, "estudiantes", cred.user.uid), {
-                    nombre: document.getElementById('regName').value,
-                    semestre: document.getElementById('regSemestre').value,
-                    email: document.getElementById('regEmail').value,
-                    rol: "estudiante"
-                });
-            } catch (e) { showError(e.message); }
-        };
-
+        window.login = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch (e) { document.getElementById('loginError').textContent="Credenciales incorrectas."; document.getElementById('loginError').classList.remove('d-none'); } };
+        window.registrar = async () => { try { const cred = await createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, document.getElementById('regPass').value); await setDoc(doc(db, "estudiantes", cred.user.uid), { nombre: document.getElementById('regName').value, semestre: document.getElementById('regSemestre').value, email: document.getElementById('regEmail').value, rol: "estudiante" }); } catch (e) { alert(e.message); } };
         window.logout = () => signOut(auth);
-
-        function showError(msg) {
-            const err = document.getElementById('loginError');
-            err.textContent = msg;
-            err.classList.remove('d-none');
-        }
+        window.toggleRegister = () => { const l=document.getElementById('formLogin'), r=document.getElementById('formRegister'); l.style.display=l.style.display==='none'?'block':'none'; r.style.display=r.style.display==='none'?'block':'none'; };
 
         async function cargarPerfil(uid) {
             const snap = await getDoc(doc(db, "estudiantes", uid));
             if (snap.exists()) {
                 currentUserData = snap.data();
-                let sem = currentUserData.semestre;
-                if(sem !== 'Internado' && sem !== 'Servicio') sem += '° Semestre';
                 document.getElementById('userNameDisplay').textContent = "Dr(a). " + currentUserData.nombre;
-                document.getElementById('userSemestreDisplay').textContent = sem;
+                document.getElementById('userSemestreDisplay').textContent = currentUserData.semestre + (isNaN(currentUserData.semestre)?'':'° Semestre');
             }
         }
 
+        // APORTES
         window.abrirSubirArchivo = () => new bootstrap.Modal(document.getElementById('uploadModal')).show();
-
         window.subirArchivo = async () => {
             const file = document.getElementById('fileInput').files[0];
-            const title = document.getElementById('fileTitle').value;
             if(!file) return;
-            document.getElementById('btnSubir').disabled = true;
-            document.getElementById('uploadStatus').classList.remove('d-none');
-            document.getElementById('progressBar').style.width = "50%";
+            document.getElementById('btnSubir').disabled = true; document.getElementById('uploadStatus').classList.remove('d-none'); document.getElementById('progressBar').style.width = "50%";
             try {
-                const storageRef = ref(storage, 'aportes/' + Date.now() + '_' + file.name);
-                await uploadBytes(storageRef, file);
-                document.getElementById('progressBar').style.width = "100%";
-                const url = await getDownloadURL(storageRef);
-                await addDoc(collection(db, "aportes"), {
-                    titulo: title, url: url, autor: currentUserData ? currentUserData.nombre : "Anónimo",
-                    semestreAutor: currentUserData ? currentUserData.semestre : "?", fecha: new Date(), tipo: file.type
-                });
-                alert("¡Aporte publicado!");
-                bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide();
-                document.getElementById('uploadForm').reset();
-                document.getElementById('uploadStatus').classList.add('d-none');
-                document.getElementById('btnSubir').disabled = false;
-                cargarAportes();
-            } catch (error) { alert("Error: " + error.message); document.getElementById('btnSubir').disabled = false; }
+                const sRef = ref(storage, 'aportes/'+Date.now()+'_'+file.name);
+                await uploadBytes(sRef, file);
+                const url = await getDownloadURL(sRef);
+                await addDoc(collection(db, "aportes"), { titulo: document.getElementById('fileTitle').value, url: url, autor: currentUserData.nombre, semestreAutor: currentUserData.semestre, fecha: new Date(), tipo: file.type });
+                alert("Subido con éxito"); bootstrap.Modal.getInstance(document.getElementById('uploadModal')).hide(); document.getElementById('uploadForm').reset(); document.getElementById('uploadStatus').classList.add('d-none'); document.getElementById('btnSubir').disabled = false; cargarAportes();
+            } catch(e) { alert(e.message); document.getElementById('btnSubir').disabled = false; }
         };
-
         window.cargarAportes = async () => {
-            const lista = document.getElementById('listaAportes');
             try {
-                const q = query(collection(db, "aportes"), orderBy("fecha", "desc"), limit(20));
-                const snap = await getDocs(q);
+                const snap = await getDocs(query(collection(db, "aportes"), orderBy("fecha", "desc"), limit(20)));
                 let html = "";
-                if (snap.empty) html = '<div class="text-center py-4 text-muted">Aún no hay aportes.</div>';
-                else {
-                    snap.forEach((doc) => {
-                        const d = doc.data();
-                        const icono = d.tipo.includes('pdf') ? 'fa-file-pdf text-danger' : 'fa-file-image text-primary';
-                        html += `<div class="col-md-6 col-lg-4"><div class="card p-3 h-100 shadow-sm border-0"><div class="d-flex justify-content-between"><span class="badge bg-light text-dark mb-2">${d.semestreAutor}</span></div><h6 class="fw-bold text-truncate"><i class="fas ${icono} me-2"></i>${d.titulo}</h6><p class="small text-muted">Por: ${d.autor}</p><a href="${d.url}" target="_blank" class="btn btn-sm btn-outline-secondary mt-auto w-100">Ver Material</a></div></div>`;
-                    });
-                }
-                lista.innerHTML = html;
-            } catch (e) { console.log(e); }
+                snap.forEach(d => { const data = d.data(); const icon = data.tipo.includes('pdf')?'fa-file-pdf text-danger':'fa-file-image text-primary'; html += `<div class="col-md-6"><div class="card p-2 shadow-sm border-0"><div class="d-flex justify-content-between"><small class="badge bg-light text-dark">${data.semestreAutor}</small></div><h6 class="text-truncate mt-1"><i class="fas ${icon} me-1"></i>${data.titulo}</h6><a href="${data.url}" target="_blank" class="btn btn-sm btn-outline-secondary w-100 mt-1">Ver</a></div></div>`; });
+                document.getElementById('listaAportes').innerHTML = snap.empty ? '<div class="text-center w-100 text-muted">Sin aportes aún.</div>' : html;
+            } catch(e) {}
         };
     </script>
 
     <script>
+        // 1. CALCULADORA
+        function calcularDosis() {
+            const peso = parseFloat(document.getElementById('pesoCalc').value);
+            if (!peso) { alert("Ingresa el peso en kg"); return; }
+            
+            // Paracetamol: 10-15 mg/kg
+            const paraMin = (peso * 10).toFixed(0);
+            const paraMax = (peso * 15).toFixed(0);
+            
+            // Ibuprofeno: 5-10 mg/kg
+            const ibuMin = (peso * 5).toFixed(0);
+            const ibuMax = (peso * 10).toFixed(0);
+            
+            document.getElementById('dosisPara').textContent = `${paraMin} - ${paraMax}`;
+            document.getElementById('dosisIbu').textContent = `${ibuMin} - ${ibuMax}`;
+            document.getElementById('resDosis').style.display = 'block';
+        }
+
+        // 2. TRADUCTOR SIMPLE (Tsotsil ejemplo)
+        function traducir() {
+            const opcion = document.getElementById('fraseSelect').value;
+            const caja = document.getElementById('traduccionBox');
+            let texto = "...";
+            
+            // Diccionario Básico (Ejemplo)
+            switch(opcion) {
+                case '1': texto = "Lek oyoxuk (Buenos días)"; break;
+                case '2': texto = "¿Bu x-a'i k'ux? (¿Dónde duele?)"; break;
+                case '3': texto = "Jamo a ve' (Abre la boca)"; break;
+                case '4': texto = "Jik'o ik' (Respira profundo)"; break;
+                case '5': texto = "Uch'an li poxe (Toma medicina)"; break;
+                default: texto = "...";
+            }
+            caja.textContent = texto;
+        }
+
+        // 3. IA LÓGICA (LLAMA 3.3)
         const GROQ_API_KEY = "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"; 
         function abrirIA() { new bootstrap.Modal(document.getElementById('iaModal')).show(); }
         async function consultarIA() {
@@ -343,7 +408,6 @@
                 const d = await r.json(); document.getElementById(lid).remove();
                 if(d.choices) c.innerHTML += `<div class="chat-msg-ai"><div>${d.choices[0].message.content.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div></div>`;
             } catch(e) { document.getElementById(lid).innerHTML = "Error."; }
-            c.scrollTop = c.scrollHeight;
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
