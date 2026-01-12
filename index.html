@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centro de Recursos Académicos Comité Medicina| UNICH</title>
+    <title>Centro de Recursos Académicos Comité Medicina | UNICH</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,7 +12,8 @@
     <style>
         :root {
             --primary-color: #003366; /* Azul Institucional */
-            --accent-color: #D4AF37; /* Dorado sutil para detalles */
+            --secondary-color: #8A1538; /* Rojo Quemado (Acento) */
+            --accent-color: #D4AF37; /* Dorado */
             --bg-light: #f4f6f9;
             --text-dark: #2c3e50;
         }
@@ -20,18 +21,13 @@
         body { font-family: 'Lato', sans-serif; background-color: var(--bg-light); color: var(--text-dark); }
         h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; }
 
-        /* HERO SECTION (ENCABEZADO) */
+        /* HERO HEADER */
         .hero-header {
             background: linear-gradient(135deg, var(--primary-color) 0%, #001a33 100%);
             color: white;
-            padding: 3rem 0 5rem 0; /* Padding inferior extra para el efecto solapado */
+            padding: 3rem 0 5rem 0;
             position: relative;
         }
-        
-        .hero-title { font-weight: 700; letter-spacing: -0.5px; }
-        .hero-subtitle { font-weight: 300; opacity: 0.9; border-left: 3px solid var(--accent-color); padding-left: 15px; }
-
-        /* BOTÓN DE ACCESO */
         .btn-access {
             background-color: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.3);
@@ -40,18 +36,18 @@
         }
         .btn-access:hover { background-color: white; color: var(--primary-color); transform: translateY(-2px); }
 
-        /* TABLERO DE AVISOS (FLOTANTE) */
+        /* NOTICE BOARD */
         .notice-board {
             background: white;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            margin-top: -40px; /* Sube sobre el header */
+            margin-top: -40px;
             position: relative;
             z-index: 10;
             border-left: 5px solid var(--accent-color);
         }
 
-        /* TARJETAS DE SECCIONES */
+        /* CARDS GRID */
         .section-card {
             background: white;
             border: none;
@@ -66,14 +62,12 @@
             display: block;
             border-bottom: 3px solid transparent;
         }
-        
         .section-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 25px rgba(0,51,102,0.1);
             border-bottom: 3px solid var(--primary-color);
             color: var(--primary-color);
         }
-
         .icon-circle {
             width: 70px;
             height: 70px;
@@ -87,13 +81,52 @@
             margin: 0 auto 1.5rem auto;
             transition: background 0.3s, color 0.3s;
         }
-
         .section-card:hover .icon-circle { background-color: var(--primary-color); color: white; }
 
-        /* FOOTER */
+        /* BUZÓN FLOTANTE (NUEVO) */
+        .buzon-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-size: 1.5rem;
+            z-index: 1000;
+            transition: transform 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+        .buzon-btn:hover { transform: scale(1.1); background-color: #6d102b; color: white; }
+        .buzon-tooltip {
+            position: fixed;
+            bottom: 45px;
+            right: 100px;
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        .buzon-btn:hover + .buzon-tooltip { opacity: 1; }
+
+        /* IA MODAL STYLES */
+        .chat-msg-user { text-align: right; margin-bottom: 10px; }
+        .chat-msg-user span { background-color: var(--primary-color); color: white; padding: 8px 12px; border-radius: 15px 15px 0 15px; display: inline-block; }
+        .chat-msg-ai { text-align: left; margin-bottom: 10px; }
+        .chat-msg-ai div { background-color: #f1f3f5; padding: 10px 15px; border-radius: 15px 15px 15px 0; display: inline-block; border: 1px solid #dee2e6; }
+        
         footer { background-color: #1a1a1a; color: #888; padding: 2rem 0; font-size: 0.85rem; }
         .footer-link { color: #888; text-decoration: none; border-bottom: 1px dashed #555; }
-        .footer-link:hover { color: white; border-color: white; }
     </style>
 </head>
 <body>
@@ -108,18 +141,14 @@
                         <h1 class="h4 m-0 fw-bold">UNICH MEDICINA</h1>
                     </div>
                 </div>
-                
                 <button onclick="irALogin()" class="btn btn-access rounded-pill px-4 py-2 fw-bold">
                     <i class="fas fa-user-graduate me-2"></i>Acceso Alumnos
                 </button>
             </div>
-
             <div class="row mt-4">
                 <div class="col-lg-8">
-                    <h1 class="display-4 hero-title mb-3">Centro de Recursos Académicos</h1>
-                    <p class="lead hero-subtitle">
-                        Plataforma oficial de gestión del conocimiento y herramientas clínicas para la Licenciatura en Médico Cirujano.
-                    </p>
+                    <h1 class="display-4 hero-title mb-3 fw-bold">Centro de Recursos Académicos</h1>
+                    <p class="lead hero-subtitle">Plataforma oficial de gestión del conocimiento y herramientas clínicas.</p>
                 </div>
             </div>
         </div>
@@ -138,7 +167,7 @@
                         <div>
                             <p class="mb-1 fw-bold text-dark">Inicio de Módulos Clínicos 2026</p>
                             <p class="mb-0 text-muted small">
-                                Se informa a la comunidad estudiantil que los manuales de Pediatría y Medicina Interna ya se encuentran disponibles en la sección "Libros". El Dr. Evidence ha sido actualizado con las guías 2025.
+                                Los manuales de Pediatría y Medicina Interna ya se encuentran disponibles en la sección "Libros".
                             </p>
                         </div>
                     </div>
@@ -151,74 +180,136 @@
         <div class="row g-4 justify-content-center">
             
             <div class="col-md-6 col-lg-4">
-                <a href="#" onclick="alert('Inicia sesión para descargar libros.')" class="section-card shadow-sm">
+                <a href="#" onclick="abrirIA()" class="section-card shadow-sm border-primary">
+                    <div class="icon-circle" style="background-color: rgba(212, 175, 55, 0.1); color: var(--accent-color);">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h5 class="fw-bold text-primary">Dr. Evidence (IA)</h5>
+                    <p class="small text-muted mb-0">Agente inteligente para tutoría académica y simulación de casos clínicos.</p>
+                    <span class="badge bg-primary mt-2">Activo 24/7</span>
+                </a>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <a href="#" onclick="alert('Requiere inicio de sesión.')" class="section-card shadow-sm">
                     <div class="icon-circle"><i class="fas fa-book-medical"></i></div>
                     <h5 class="fw-bold">Libros y Bibliografía</h5>
-                    <p class="small text-muted mb-0">Acceso digital a textos base: Nelson, Harrison, Sabiston y manuales CTO.</p>
+                    <p class="small text-muted mb-0">Acceso digital a textos base: Nelson, Harrison, y manuales CTO.</p>
                 </a>
             </div>
 
             <div class="col-md-6 col-lg-4">
-                <a href="#" onclick="alert('Herramienta disponible en el área de alumnos.')" class="section-card shadow-sm">
+                <a href="#" onclick="alert('Requiere inicio de sesión.')" class="section-card shadow-sm">
                     <div class="icon-circle"><i class="fas fa-calculator"></i></div>
                     <h5 class="fw-bold">Calculadoras y Escalas</h5>
-                    <p class="small text-muted mb-0">Dosis pediátricas, Glasgow, APGAR, Silverman y filtrado glomerular.</p>
+                    <p class="small text-muted mb-0">Dosis pediátricas, Glasgow, APGAR, Silverman.</p>
                 </a>
             </div>
 
             <div class="col-md-6 col-lg-4">
-                <a href="#" onclick="alert('Próximamente: Diccionarios y Guías.')" class="section-card shadow-sm">
+                <a href="#" onclick="alert('Próximamente.')" class="section-card shadow-sm">
                     <div class="icon-circle"><i class="fas fa-hand-holding-heart"></i></div>
                     <h5 class="fw-bold">Medicina Intercultural</h5>
-                    <p class="small text-muted mb-0">Guías de trato digno, medicina tradicional y traducción Tsotsil/Tseltal.</p>
+                    <p class="small text-muted mb-0">Guías de trato digno y medicina tradicional.</p>
                 </a>
             </div>
 
             <div class="col-md-6 col-lg-4">
-                <a href="#" onclick="alert('Sección en construcción.')" class="section-card shadow-sm">
+                <a href="#" onclick="alert('Próximamente.')" class="section-card shadow-sm">
                     <div class="icon-circle"><i class="fas fa-stethoscope"></i></div>
                     <h5 class="fw-bold">Actualización Médica</h5>
-                    <p class="small text-muted mb-0">Artículos recientes, nuevas GPC y boletines epidemiológicos.</p>
+                    <p class="small text-muted mb-0">Artículos recientes, nuevas GPC y boletines.</p>
                 </a>
             </div>
 
             <div class="col-md-6 col-lg-4">
-                <a href="#" onclick="alert('Reglamentos disponibles pronto.')" class="section-card shadow-sm">
+                <a href="#" onclick="alert('Próximamente.')" class="section-card shadow-sm">
                     <div class="icon-circle"><i class="fas fa-balance-scale"></i></div>
                     <h5 class="fw-bold">Legislación Universitaria</h5>
-                    <p class="small text-muted mb-0">Derechos universitarios, reglamento interno y estatutos del Comité.</p>
+                    <p class="small text-muted mb-0">Derechos universitarios y reglamento interno.</p>
                 </a>
             </div>
 
         </div>
     </section>
 
+    <button class="buzon-btn" onclick="alert('Buzón de Contacto: \n\nPróximamente podrás enviar tus sugerencias o quejas directamente al Comité por este medio.')">
+        <i class="fas fa-envelope-open-text"></i>
+    </button>
+    <div class="buzon-tooltip">Buzón de Contacto</div>
+
     <footer class="text-center mt-5">
         <div class="container">
             <p class="mb-2 fw-bold text-white-50">Comité de Estudiantes de Médico Cirujano | UNICH</p>
-            <p class="small mb-3">San Cristóbal de Las Casas, Chiapas. Gestión 2025-2026.</p>
-            
             <div class="d-inline-block border-top border-secondary pt-3">
-                <a href="#" class="footer-link me-3" onclick="mostrarPrivacidad()">Aviso de Privacidad</a>
+                <a href="#" class="footer-link me-3" onclick="alert('Aviso de Privacidad en construcción.')">Aviso de Privacidad</a>
                 <a href="#" class="footer-link">Tratamiento de Datos Personales</a>
             </div>
         </div>
     </footer>
 
-    <script>
-        // Función provisional para el botón de login
-        function irALogin() {
-            // Aquí conectaremos con la vista de Firebase más adelante.
-            // Por ahora, recarga la página o puede llevar a un login.html si lo separamos.
-            alert("Redirigiendo al Sistema de Autenticación de Alumnos...");
-            // window.location.href = 'login.html'; // Ejemplo futuro
-        }
-
-        function mostrarPrivacidad() {
-            alert("AVISO DE PRIVACIDAD\n\nLos datos recabados en esta plataforma son de uso exclusivo para fines académicos del Comité Estudiantil. No se comparten con terceros ajenos a la institución.");
-        }
-    </script>
+    <div class="modal fade" id="iaModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title"><i class="fas fa-brain me-2 text-warning"></i>Dr. Evidence</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-light">
+                    <div id="chatHistory" class="p-3 mb-3 bg-white rounded shadow-sm" style="height: 350px; overflow-y: auto;">
+                        <div class="text-center mt-3">
+                            <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+                            <p class="fw-bold text-dark">¡Soy Dr. Evidence!</p>
+                            <p class="text-muted small px-4">
+                                Su agente IA enfocado en medicina, listo para actuar como su tutor académico o brindarle casos clínicos, seleccione el modo según lo necesite.
+                            </p>
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-primary me-2" onclick="setMode('Tutor')">👨‍🏫 Tutor Académico</button>
+                                <button class="btn btn-sm btn-outline-success" onclick="setMode('Clinico')">🏥 Caso Clínico</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="iaQuery" class="form-control" placeholder="Escriba su consulta..." onkeypress="if(event.key === 'Enter') consultarIA()">
+                        <button class="btn btn-primary" onclick="consultarIA()"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                    <small class="text-muted d-block text-center mt-2" style="font-size: 0.7rem;">Powered by Groq Llama 3 • Uso Académico</small>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // LÓGICA IA
+        const GROQ_API_KEY = "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"; 
+        function abrirIA() { new bootstrap.Modal(document.getElementById('iaModal')).show(); }
+        function setMode(m) {
+            const i = document.getElementById('iaQuery');
+            i.value = m === 'Tutor' ? "Actúa como mi tutor y explícame: " : "Genera un caso clínico pediátrico desafiante.";
+            i.focus();
+        }
+        async function consultarIA(tf = null) {
+            const i = document.getElementById('iaQuery'), c = document.getElementById('chatHistory'), p = tf || i.value.trim();
+            if(!p) return;
+            c.innerHTML += `<div class="chat-msg-user"><span>${p}</span></div>`;
+            if(!tf) i.value = '';
+            c.scrollTop = c.scrollHeight;
+            const lid = "l"+Date.now();
+            c.innerHTML += `<div id="${lid}" class="text-muted small ms-2"><i class="fas fa-spinner fa-spin"></i> Procesando...</div>`;
+            try {
+                const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                    method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
+                    body: JSON.stringify({ model: "llama3-70b-8192", messages: [{role:"system",content:"Eres Dr. Evidence, tutor médico experto."}, {role:"user",content:p}] })
+                });
+                const d = await r.json();
+                document.getElementById(lid).remove();
+                if(d.choices) c.innerHTML += `<div class="chat-msg-ai"><div>${d.choices[0].message.content.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div></div>`;
+            } catch(e) { document.getElementById(lid).innerHTML = "Error."; }
+            c.scrollTop = c.scrollHeight;
+        }
+
+        function irALogin() { alert("Redirigiendo al Login..."); }
+    </script>
 </body>
 </html>
