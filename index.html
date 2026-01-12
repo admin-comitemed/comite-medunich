@@ -3,323 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma Comité Medicina | Gestión 2025-2026</title>
+    <title>Centro de Recursos Académicos Comité Medicina| UNICH</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     
     <style>
-        :root { --primary: #003366; --accent: #d4af37; --bg: #f4f6f9; }
-        body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; }
+        :root {
+            --primary-color: #003366; /* Azul Institucional */
+            --accent-color: #D4AF37; /* Dorado sutil para detalles */
+            --bg-light: #f4f6f9;
+            --text-dark: #2c3e50;
+        }
+
+        body { font-family: 'Lato', sans-serif; background-color: var(--bg-light); color: var(--text-dark); }
+        h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; }
+
+        /* HERO SECTION (ENCABEZADO) */
+        .hero-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #001a33 100%);
+            color: white;
+            padding: 3rem 0 5rem 0; /* Padding inferior extra para el efecto solapado */
+            position: relative;
+        }
         
-        /* LOGIN VIEW */
-        #login-view { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--primary) 0%, #001f3f 100%); }
-        .login-card { background: white; padding: 2rem; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .hero-title { font-weight: 700; letter-spacing: -0.5px; }
+        .hero-subtitle { font-weight: 300; opacity: 0.9; border-left: 3px solid var(--accent-color); padding-left: 15px; }
+
+        /* BOTÓN DE ACCESO */
+        .btn-access {
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            transition: all 0.3s;
+        }
+        .btn-access:hover { background-color: white; color: var(--primary-color); transform: translateY(-2px); }
+
+        /* TABLERO DE AVISOS (FLOTANTE) */
+        .notice-board {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-top: -40px; /* Sube sobre el header */
+            position: relative;
+            z-index: 10;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        /* TARJETAS DE SECCIONES */
+        .section-card {
+            background: white;
+            border: none;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            height: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-dark);
+            display: block;
+            border-bottom: 3px solid transparent;
+        }
         
-        /* APP VIEW */
-        #app-view { display: none; } /* Oculto por defecto */
-        .navbar-custom { background-color: var(--primary); }
-        .student-card { background: linear-gradient(to right, #003366, #004080); color: white; border-radius: 15px; padding: 20px; }
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(0,51,102,0.1);
+            border-bottom: 3px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .icon-circle {
+            width: 70px;
+            height: 70px;
+            background-color: #eef2f5;
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 1.5rem auto;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .section-card:hover .icon-circle { background-color: var(--primary-color); color: white; }
+
+        /* FOOTER */
+        footer { background-color: #1a1a1a; color: #888; padding: 2rem 0; font-size: 0.85rem; }
+        .footer-link { color: #888; text-decoration: none; border-bottom: 1px dashed #555; }
+        .footer-link:hover { color: white; border-color: white; }
     </style>
 </head>
 <body>
 
-    <div id="login-view">
-        <div class="login-card animate__animated animate__fadeInUp">
-            <div class="text-center mb-4">
-                <i class="fas fa-hospital-user fa-3x text-primary mb-2"></i>
-                <h4 class="fw-bold">Acceso Estudiantes</h4>
-                <p class="text-muted small">Comité Médico Cirujano 2025-2026</p>
-            </div>
-
-            <form id="formLogin" onsubmit="event.preventDefault(); login();">
-                <div class="mb-3">
-                    <input type="email" id="email" class="form-control" placeholder="Correo electrónico" required>
-                </div>
-                <div class="mb-3">
-                    <input type="password" id="password" class="form-control" placeholder="Contraseña" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100 fw-bold">Entrar</button>
-                <div class="text-center mt-3">
-                    <a href="#" onclick="toggleRegister()" class="small text-decoration-none">¿Nuevo ingreso? Regístrate aquí</a>
-                </div>
-            </form>
-
-            <form id="formRegister" style="display:none;" onsubmit="event.preventDefault(); registrar();">
-                <div class="mb-2"><input type="text" id="regName" class="form-control" placeholder="Nombre Completo" required></div>
-                
-                <div class="mb-2">
-                    <select id="regSemestre" class="form-select" required>
-                        <option value="" selected disabled>Selecciona tu Semestre</option>
-                        <option value="1">1er Semestre</option>
-                        <option value="2">2do Semestre</option>
-                        <option value="3">3er Semestre</option>
-                        <option value="4">4to Semestre</option>
-                        <option value="5">5to Semestre</option>
-                        <option value="6">6to Semestre</option>
-                        <option value="7">7mo Semestre</option>
-                        <option value="8">8vo Semestre (Pediatría)</option>
-                        <option value="9">Internado</option>
-                    </select>
-                </div>
-                
-                <div class="mb-2"><input type="email" id="regEmail" class="form-control" placeholder="Correo electrónico" required></div>
-                <div class="mb-3"><input type="password" id="regPass" class="form-control" placeholder="Crear Contraseña" required></div>
-                
-                <div class="mb-3 d-flex justify-content-center">
-                    <div class="g-recaptcha" data-sitekey="6Lfvm0csAAAAAJVhwJDeKaBoXv9RkKrUNWYGtf6P"></div>
-                </div>
-
-                <button type="submit" class="btn btn-success w-100 fw-bold">Registrarme</button>
-                
-                <div class="text-center mt-3">
-                    <a href="#" onclick="toggleRegister()" class="small text-decoration-none text-muted">Volver al Login</a>
-                </div>
-            </form>
-            <div id="loginError" class="alert alert-danger mt-3 small d-none"></div>
-        </div>
-    </div>
-
-    <div id="app-view">
-        <nav class="navbar navbar-dark navbar-custom mb-4">
-            <div class="container">
-                <a class="navbar-brand fw-bold" href="#"><i class="fas fa-user-md me-2"></i>Comité UNICH</a>
-                <div class="d-flex">
-                    <button class="btn btn-sm btn-info text-dark me-2 fw-bold" onclick="abrirIA()"><i class="fas fa-brain me-1"></i>Dr. Evidence</button>
-                    <button class="btn btn-sm btn-outline-light" onclick="logout()">Salir <i class="fas fa-sign-out-alt"></i></button>
-                </div>
-            </div>
-        </nav>
-
+    <header class="hero-header">
         <div class="container">
-            <div class="student-card mb-4 shadow animate__animated animate__fadeIn">
+            <div class="d-flex justify-content-between align-items-start mb-4">
                 <div class="d-flex align-items-center">
-                    <div class="bg-white text-primary rounded-circle p-3 me-3 display-6"><i class="fas fa-user-graduate"></i></div>
+                    <i class="fas fa-university fa-2x me-3 text-warning"></i>
                     <div>
-                        <h6 class="text-warning text-uppercase mb-0 small fw-bold">Expediente Académico</h6>
-                        <h2 class="fw-bold mb-0" id="userNameDisplay">Cargando...</h2>
-                        <span class="badge bg-light text-dark mt-2" id="userSemestreDisplay">...</span>
+                        <small class="text-uppercase text-white-50 fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">Comité Estudiantil 2025-2026</small>
+                        <h1 class="h4 m-0 fw-bold">UNICH MEDICINA</h1>
                     </div>
                 </div>
+                
+                <button onclick="irALogin()" class="btn btn-access rounded-pill px-4 py-2 fw-bold">
+                    <i class="fas fa-user-graduate me-2"></i>Acceso Alumnos
+                </button>
             </div>
 
-            <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#biblioteca">📚 Biblioteca</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#apuntes">📝 Mis Apuntes</button></li>
-            </ul>
+            <div class="row mt-4">
+                <div class="col-lg-8">
+                    <h1 class="display-4 hero-title mb-3">Centro de Recursos Académicos</h1>
+                    <p class="lead hero-subtitle">
+                        Plataforma oficial de gestión del conocimiento y herramientas clínicas para la Licenciatura en Médico Cirujano.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </header>
 
-            <div class="tab-content">
-                <div class="tab-pane fade show active" id="biblioteca">
-                    <div class="alert alert-info border-0 shadow-sm">
-                        <i class="fas fa-info-circle me-2"></i> Accede a los libros esenciales de la carrera.
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="card p-3 h-100 shadow-sm border-0">
-                                <h6 class="fw-bold">Nelson. Tratado de Pediatría</h6>
-                                <p class="small text-muted">La biblia de la pediatría. Edición 21.</p>
-                                <button class="btn btn-sm btn-outline-primary mt-auto">Ver Recurso</button>
-                            </div>
+    <div class="container">
+        <div class="notice-board p-4">
+            <div class="row align-items-center">
+                <div class="col-md-3 border-end border-light text-center text-md-start mb-3 mb-md-0">
+                    <h6 class="text-primary fw-bold text-uppercase mb-1"><i class="fas fa-bullhorn me-2"></i>Tablero Oficial</h6>
+                    <small class="text-muted">Última actualización: Hoy</small>
+                </div>
+                <div class="col-md-9">
+                    <div class="d-flex align-items-start">
+                        <span class="badge bg-warning text-dark me-3 mt-1">AVISO</span>
+                        <div>
+                            <p class="mb-1 fw-bold text-dark">Inicio de Módulos Clínicos 2026</p>
+                            <p class="mb-0 text-muted small">
+                                Se informa a la comunidad estudiantil que los manuales de Pediatría y Medicina Interna ya se encuentran disponibles en la sección "Libros". El Dr. Evidence ha sido actualizado con las guías 2025.
+                            </p>
                         </div>
                     </div>
                 </div>
-
-                <div class="tab-pane fade" id="apuntes">
-                    <div class="text-center py-5 text-muted">
-                        <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-                        <h5>Tus aportes académicos</h5>
-                        <p>Próximamente podrás subir tus resúmenes aquí.</p>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="iaModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title"><i class="fas fa-user-md me-2 text-info"></i>Dr. Evidence</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body bg-light">
-                    <div id="chatHistory" class="p-3 mb-3 bg-white rounded shadow-sm" style="height: 300px; overflow-y: auto;">
-                        <div class="text-muted small text-center mt-2">Sistemas Completos y listos para responder preguntas</div>
-                    </div>
-                    <div class="input-group">
-                        <input type="text" id="iaQuery" class="form-control" placeholder="Escribe tu consulta..." onkeypress="if(event.key === 'Enter') consultarIA()">
-                        <button class="btn btn-dark" onclick="consultarIA()"><i class="fas fa-paper-plane"></i></button>
-                    </div>
-                    <small class="text-muted d-block text-center mt-1" style="font-size: 0.7rem;">Powered by Groq</small>
-                </div>
+    <section class="container my-5 py-4">
+        <div class="row g-4 justify-content-center">
+            
+            <div class="col-md-6 col-lg-4">
+                <a href="#" onclick="alert('Inicia sesión para descargar libros.')" class="section-card shadow-sm">
+                    <div class="icon-circle"><i class="fas fa-book-medical"></i></div>
+                    <h5 class="fw-bold">Libros y Bibliografía</h5>
+                    <p class="small text-muted mb-0">Acceso digital a textos base: Nelson, Harrison, Sabiston y manuales CTO.</p>
+                </a>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <a href="#" onclick="alert('Herramienta disponible en el área de alumnos.')" class="section-card shadow-sm">
+                    <div class="icon-circle"><i class="fas fa-calculator"></i></div>
+                    <h5 class="fw-bold">Calculadoras y Escalas</h5>
+                    <p class="small text-muted mb-0">Dosis pediátricas, Glasgow, APGAR, Silverman y filtrado glomerular.</p>
+                </a>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <a href="#" onclick="alert('Próximamente: Diccionarios y Guías.')" class="section-card shadow-sm">
+                    <div class="icon-circle"><i class="fas fa-hand-holding-heart"></i></div>
+                    <h5 class="fw-bold">Medicina Intercultural</h5>
+                    <p class="small text-muted mb-0">Guías de trato digno, medicina tradicional y traducción Tsotsil/Tseltal.</p>
+                </a>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <a href="#" onclick="alert('Sección en construcción.')" class="section-card shadow-sm">
+                    <div class="icon-circle"><i class="fas fa-stethoscope"></i></div>
+                    <h5 class="fw-bold">Actualización Médica</h5>
+                    <p class="small text-muted mb-0">Artículos recientes, nuevas GPC y boletines epidemiológicos.</p>
+                </a>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <a href="#" onclick="alert('Reglamentos disponibles pronto.')" class="section-card shadow-sm">
+                    <div class="icon-circle"><i class="fas fa-balance-scale"></i></div>
+                    <h5 class="fw-bold">Legislación Universitaria</h5>
+                    <p class="small text-muted mb-0">Derechos universitarios, reglamento interno y estatutos del Comité.</p>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="text-center mt-5">
+        <div class="container">
+            <p class="mb-2 fw-bold text-white-50">Comité de Estudiantes de Médico Cirujano | UNICH</p>
+            <p class="small mb-3">San Cristóbal de Las Casas, Chiapas. Gestión 2025-2026.</p>
+            
+            <div class="d-inline-block border-top border-secondary pt-3">
+                <a href="#" class="footer-link me-3" onclick="mostrarPrivacidad()">Aviso de Privacidad</a>
+                <a href="#" class="footer-link">Tratamiento de Datos Personales</a>
             </div>
         </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        // TU CONFIGURACIÓN FIREBASE
-        const firebaseConfig = {
-            apiKey: "AIzaSyBxl7NFNI8lxfmdC-YJYmZ21zQOxQ72-3U",
-            authDomain: "centro-de-recursos-academicos.firebaseapp.com",
-            projectId: "centro-de-recursos-academicos",
-            storageBucket: "centro-de-recursos-academicos.firebasestorage.app",
-            messagingSenderId: "799558207054",
-            appId: "1:799558207054:web:c7bb8f1400a4f2181ee51f",
-            measurementId: "G-GWC94WNY9F"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // --- MANEJO DE VISTAS ---
-        const loginView = document.getElementById('login-view');
-        const appView = document.getElementById('app-view');
-
-        // MONITOR DE ESTADO (¿Está logueado?)
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // SI hay usuario
-                loginView.style.display = 'none';
-                appView.style.display = 'block';
-                await cargarPerfil(user.uid);
-            } else {
-                // NO hay usuario
-                loginView.style.display = 'flex';
-                appView.style.display = 'none';
-            }
-        });
-
-        // --- FUNCIONES DE AUTENTICACIÓN ---
-        window.toggleRegister = () => {
-            const formLogin = document.getElementById('formLogin');
-            const formRegister = document.getElementById('formRegister');
-            if(formLogin.style.display === 'none') {
-                formLogin.style.display = 'block';
-                formRegister.style.display = 'none';
-            } else {
-                formLogin.style.display = 'none';
-                formRegister.style.display = 'block';
-            }
-        };
-
-        window.registrar = async () => {
-            const email = document.getElementById('regEmail').value;
-            const pass = document.getElementById('regPass').value;
-            const nombre = document.getElementById('regName').value;
-            const semestre = document.getElementById('regSemestre').value;
-            const errorDiv = document.getElementById('loginError');
-
-            // VERIFICACIÓN DE RECAPTCHA
-            const captchaResponse = grecaptcha.getResponse();
-            if (captchaResponse.length === 0) {
-                errorDiv.textContent = "⚠️ Por favor, marca la casilla 'No soy un robot'.";
-                errorDiv.classList.remove('d-none');
-                return;
-            }
-
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-                const user = userCredential.user;
-                
-                await setDoc(doc(db, "estudiantes", user.uid), {
-                    nombre: nombre,
-                    semestre: semestre,
-                    email: email,
-                    rol: "estudiante",
-                    fechaRegistro: new Date()
-                });
-                
-                errorDiv.classList.add('d-none');
-            } catch (error) {
-                console.error(error);
-                let mensaje = error.message;
-                if(error.code === 'auth/email-already-in-use') mensaje = "Este correo ya está registrado.";
-                if(error.code === 'auth/weak-password') mensaje = "La contraseña es muy débil (mínimo 6 caracteres).";
-                
-                errorDiv.textContent = "Error: " + mensaje;
-                errorDiv.classList.remove('d-none');
-            }
-        };
-
-        window.login = async () => {
-            const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-            const errorDiv = document.getElementById('loginError');
-
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-                errorDiv.classList.add('d-none');
-            } catch (error) {
-                errorDiv.textContent = "Credenciales incorrectas o usuario no encontrado.";
-                errorDiv.classList.remove('d-none');
-            }
-        };
-
-        window.logout = () => signOut(auth);
-
-        async function cargarPerfil(uid) {
-            const docRef = doc(db, "estudiantes", uid);
-            const docSnap = await getDoc(docRef);
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                document.getElementById('userNameDisplay').textContent = "Dr(a). " + data.nombre;
-                document.getElementById('userSemestreDisplay').textContent = data.semestre + "° Semestre";
-            } else {
-                document.getElementById('userNameDisplay').textContent = "Usuario";
-            }
-        }
-    </script>
+    </footer>
 
     <script>
-        const GROQ_API_KEY = "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"; 
-        
-        function abrirIA() { new bootstrap.Modal(document.getElementById('iaModal')).show(); }
+        // Función provisional para el botón de login
+        function irALogin() {
+            // Aquí conectaremos con la vista de Firebase más adelante.
+            // Por ahora, recarga la página o puede llevar a un login.html si lo separamos.
+            alert("Redirigiendo al Sistema de Autenticación de Alumnos...");
+            // window.location.href = 'login.html'; // Ejemplo futuro
+        }
 
-        async function consultarIA() {
-            const input = document.getElementById('iaQuery');
-            const chatBox = document.getElementById('chatHistory');
-            const pregunta = input.value.trim();
-            if(!pregunta) return;
-
-            chatBox.innerHTML += `<div class="text-end mb-2"><span class="bg-primary text-white p-2 rounded">${pregunta}</span></div>`;
-            input.value = '';
-
-            // Loading
-            const loadId = "load"+Date.now();
-            chatBox.innerHTML += `<div id="${loadId}" class="text-muted small"><i class="fas fa-spinner fa-spin"></i> Analizando evidencia...</div>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            try {
-                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
-                    body: JSON.stringify({
-                        model: "openai/gpt-oss-120b", 
-                        messages: [
-                            { role: "system", content: "Eres Dr. Evidence, un asistente médico académico experto. Sé conciso y cita fuentes si es posible." },
-                            { role: "user", content: pregunta }
-                        ]
-                    })
-                });
-                const data = await response.json();
-                document.getElementById(loadId).remove();
-                
-                if(data.choices) {
-                    const txt = data.choices[0].message.content.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
-                    chatBox.innerHTML += `<div class="text-start mb-2"><div class="bg-light p-2 rounded border">${txt}</div></div>`;
-                }
-            } catch(e) {
-                if(document.getElementById(loadId)) document.getElementById(loadId).innerHTML = "Error de conexión.";
-            }
-            chatBox.scrollTop = chatBox.scrollHeight;
+        function mostrarPrivacidad() {
+            alert("AVISO DE PRIVACIDAD\n\nLos datos recabados en esta plataforma son de uso exclusivo para fines académicos del Comité Estudiantil. No se comparten con terceros ajenos a la institución.");
         }
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
