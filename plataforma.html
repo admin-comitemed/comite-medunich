@@ -129,8 +129,18 @@
 
                     <h5 class="mb-3 border-bottom pb-2 mt-4"><i class="fas fa-file-contract text-secondary me-2"></i>Formatos Oficiales</h5>
                     <div class="list-group">
-                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between"><div><i class="fas fa-file-pdf text-danger me-2"></i>Justificante Médico</div><i class="fas fa-download text-muted"></i></a>
-                        <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between"><div><i class="fas fa-file-image text-primary me-2"></i>Plantilla PPT Oficial</div><i class="fas fa-download text-muted"></i></a>
+                        <a href="https://docs.google.com/spreadsheets/d/1vCLqPCWejpWCRKa_DHXNarKFwZhmFv93/edit?usp=sharing&ouid=111314461129843481710&rtpof=true&sd=true" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div><i class="fas fa-file-excel text-success me-2"></i>Formato Solicitud CUID</div>
+                            <span class="badge bg-light text-dark"><i class="fas fa-download"></i></span>
+                        </a>
+                        <a href="https://drive.google.com/file/d/1_qyhYlrZ53I71mLZiJcV-ZtI7TV-qlBP/view?usp=sharing" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div><i class="fas fa-file-image text-primary me-2"></i>Logo Licenciatura</div>
+                            <span class="badge bg-light text-dark"><i class="fas fa-download"></i></span>
+                        </a>
+                        <a href="https://drive.google.com/file/d/1uc-L85dd3n4qHQh0Iw3BdEbql-C5jSt5/view?usp=sharing" target="_blank" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div><i class="fas fa-university text-secondary me-2"></i>Logo Universidad</div>
+                            <span class="badge bg-light text-dark"><i class="fas fa-download"></i></span>
+                        </a>
                     </div>
                 </div>
 
@@ -266,7 +276,7 @@
                 document.getElementById('login-view').style.display = 'none';
                 document.getElementById('app-view').style.display = 'block';
                 await cargarPerfil(user.uid);
-                cargarFavoritosNube(user.uid); // CARGA FAVORITOS DESDE FIREBASE
+                cargarFavoritosNube(user.uid);
             } else {
                 document.getElementById('login-view').style.display = 'flex';
                 document.getElementById('app-view').style.display = 'none';
@@ -279,27 +289,26 @@
         window.logout = () => signOut(auth);
         window.toggleRegister = () => { const l=document.getElementById('formLogin'), r=document.getElementById('formRegister'); l.style.display=l.style.display==='none'?'block':'none'; r.style.display=r.style.display==='none'?'block':'none'; };
 
-       async function cargarPerfil(uid) {
-    const snap = await getDoc(doc(db, "estudiantes", uid));
-    if (snap.exists()) {
-        currentUserData = snap.data();
-        
-        // --- DETECCIÓN INTELIGENTE DE GÉNERO ---
-        const nombrePila = currentUserData.nombre.split(' ')[0].toLowerCase(); // Toma el primer nombre
-        const excepcionesFemeninas = ['beatriz', 'noemi', 'jazmin', 'abril', 'raquel', 'guadalupe', 'lizbeth', 'monserrat', 'carmen', 'dolores', 'luz', 'pilar', 'rosario', 'consuelo', 'mercedes', 'belen', 'esther', 'judith', 'ruth', 'xochitl', 'citlalli', 'yazmin', 'karen', 'sharon', 'jocelyn', 'allison'];
-        
-        let prefijo = "Dr."; // Por defecto masculino
-        
-        // Si termina en 'a' O está en la lista de excepciones, es Dra.
-        if (nombrePila.endsWith('a') || excepcionesFemeninas.includes(nombrePila)) {
-            prefijo = "Dra.";
-        }
-        // ----------------------------------------
+        // PERFIL CON DETECCIÓN DE GÉNERO
+        async function cargarPerfil(uid) {
+            const snap = await getDoc(doc(db, "estudiantes", uid));
+            if (snap.exists()) {
+                currentUserData = snap.data();
+                
+                // --- DETECCIÓN INTELIGENTE DE GÉNERO ---
+                const nombrePila = currentUserData.nombre.split(' ')[0].toLowerCase();
+                const excepcionesFemeninas = ['beatriz', 'noemi', 'jazmin', 'abril', 'raquel', 'guadalupe', 'lizbeth', 'monserrat', 'carmen', 'dolores', 'luz', 'pilar', 'rosario', 'consuelo', 'mercedes', 'belen', 'esther', 'judith', 'ruth', 'xochitl', 'citlalli', 'yazmin', 'karen', 'sharon', 'jocelyn', 'allison'];
+                
+                let prefijo = "Dr.";
+                if (nombrePila.endsWith('a') || excepcionesFemeninas.includes(nombrePila)) {
+                    prefijo = "Dra.";
+                }
+                // ----------------------------------------
 
-        document.getElementById('userNameDisplay').textContent = prefijo + " " + currentUserData.nombre;
-        document.getElementById('userSemestreDisplay').textContent = currentUserData.semestre + (isNaN(currentUserData.semestre)?'':'° Semestre');
-    }
-}
+                document.getElementById('userNameDisplay').textContent = prefijo + " " + currentUserData.nombre;
+                document.getElementById('userSemestreDisplay').textContent = currentUserData.semestre + (isNaN(currentUserData.semestre)?'':'° Semestre');
+            }
+        }
 
         // BUZÓN
         window.enviarSugerencia = async () => {
@@ -336,7 +345,6 @@
                 let html = '';
                 querySnapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    // Usamos doc.id para poder borrarlo después
                     html += `
                     <div class="col-md-6 animate__animated animate__fadeIn">
                         <div class="fav-book-item d-flex justify-content-between align-items-center">
@@ -360,18 +368,14 @@
             if(confirm("¿Quitar de favoritos?")) {
                 try {
                     await deleteDoc(doc(db, "favoritos", docId));
-                    // Recargar la lista
                     if(auth.currentUser) cargarFavoritosNube(auth.currentUser.uid);
                 } catch(e) { alert("Error al eliminar"); }
             }
         }
-        
-        // Exportar funciones globales para los botones onclick del HTML
         window.eliminarFavoritoNube = window.eliminarFavoritoNube; 
     </script>
 
     <script>
-        // HERRAMIENTAS LOCALES
         function calcularDosis() {
             const p = parseFloat(document.getElementById('pesoCalc').value);
             if (!p) { alert("Peso?"); return; }
@@ -384,7 +388,6 @@
             const txt = op=='1'?"Lek oyoxuk":op=='2'?"¿Bu x-a'i k'ux?":"...";
             document.getElementById('traduccionBox').textContent = txt;
         }
-        // IA
         const GROQ_API_KEY = "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"; 
         function abrirIA() { new bootstrap.Modal(document.getElementById('iaModal')).show(); }
         async function consultarIA() {
