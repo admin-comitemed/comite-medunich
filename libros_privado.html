@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Privada | Comité UNICH</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #003366;
+            --secondary: #001f3f;
+            --accent: #D4AF37;
+            --bg-light: #f8f9fa;
+        }
+
+        body { font-family: 'Lato', sans-serif; background-color: var(--bg-light); color: #333; }
+        
+        /* HEADER */
+        .library-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 3rem 0;
+            border-bottom: 5px solid var(--accent);
+        }
+        .title-main { font-family: 'Montserrat', sans-serif; font-weight: 800; letter-spacing: -0.5px; }
+        
+        /* BUSCADOR */
+        .search-box {
+            position: relative;
+            max-width: 600px;
+            margin: -30px auto 30px auto;
+            z-index: 10;
+        }
+        .search-input {
+            width: 100%;
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            font-size: 1.1rem;
+        }
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .search-btn:hover { background: #b59226; transform: scale(1.1); }
+
+        /* CTA LOGIN */
+        .cta-login {
+            background: #e3f2fd;
+            border-left: 5px solid var(--primary);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        /* TARJETAS COMPACTAS */
+        .compact-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+            text-decoration: none;
+            color: #444;
+            display: flex;
+            align-items: center;
+            transition: 0.2s;
+            height: 100%;
+        }
+        .compact-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-color: var(--accent);
+            color: var(--primary);
+        }
+        .icon-box {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        /* ACORDEÓN SEMESTRES */
+        .accordion-button { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--primary); background: white; }
+        .accordion-button:not(.collapsed) { background-color: #f0f4f8; color: var(--primary); }
+        .accordion-item { border: none; margin-bottom: 10px; border-radius: 8px !important; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        /* MATERIAS Y LIBROS */
+        .subject-trigger {
+            width: 100%;
+            text-align: left;
+            padding: 12px 20px;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            font-weight: 700;
+            color: #444;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .subject-trigger:hover { background: #f8f9fa; border-color: var(--accent); color: var(--primary); }
+        .subject-trigger[aria-expanded="true"] { background: #fdfdfe; border-left: 4px solid var(--accent); color: var(--primary); }
+
+        .book-list-container {
+            background-color: #fafafa;
+            border-radius: 0 0 6px 6px;
+            margin-bottom: 10px;
+            padding: 5px 15px;
+            border-left: 2px solid #eee;
+            margin-left: 10px;
+        }
+
+        .book-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px dashed #e0e0e0;
+            font-size: 0.95rem;
+        }
+        .book-item:last-child { border-bottom: none; }
+        .book-link { color: #333; text-decoration: none; display: block; flex-grow: 1; margin-right: 10px; }
+        .book-link:hover { color: var(--primary); font-weight: 600; }
+        .book-link i { color: #4285F4; margin-right: 10px; } /* Icono Drive */
+
+        /* BOTON FAVORITOS */
+        .btn-fav {
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0 5px;
+            transition: 0.2s;
+        }
+        .btn-fav:hover { color: var(--accent); transform: scale(1.2); }
+        .btn-fav.active { color: var(--accent); }
+        
+        /* Loading Overlay */
+        #loadingOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); z-index: 9999;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+        }
+
+        /* FOOTER */
+        footer { background-color: var(--primary); color: white; padding: 3rem 0; font-size: 0.85rem; border-top: 5px solid var(--accent); }
+        .coming-soon { background: #fff3cd; color: #856404; padding: 20px; text-align: center; border-radius: 8px; border: 1px dashed #ffeeba; }
+    </style>
+</head>
+<body>
+
+    <div id="loadingOverlay">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2 fw-bold text-primary">Sincronizando biblioteca...</p>
+    </div>
+
+    <header class="library-header text-center">
+        <div class="container">
+            <a href="plataforma.html" class="text-white text-decoration-none small mb-3 d-inline-block fw-bold"><i class="fas fa-arrow-left me-1"></i> VOLVER AL AULA</a>
+            <h1 class="title-main mb-2">Biblioteca Privada</h1>
+            <p class="text-white-50 text-uppercase small ls-1">Acceso Exclusivo para Estudiantes Registrados</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="search-box">
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar libro, autor o materia..." onkeyup="filtrarLibros()">
+            <button class="search-btn"><i class="fas fa-search"></i></button>
+        </div>
+    </div>
+
+    <div class="container mb-5">
+
+        <h6 class="fw-bold text-secondary text-uppercase small mb-3 ls-1 border-bottom pb-2">Arsenal Actualizaciones Recientes</h6>
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <a href="https://drive.google.com/drive/folders/1v-rY48fjMlaXsFfzEyrbpkxCsmaV0OpW?usp=sharing" target="_blank" class="compact-card shadow-sm">
+                    <div class="icon-box bg-danger"><i class="fas fa-book-reader"></i></div>
+                    <div><h6 class="fw-bold m-0 text-dark">Manuales CTO</h6><small class="text-muted">Colección Completa</small></div>
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a href="https://drive.google.com/drive/folders/1l_Um-0o_riRO6lzYDI_NgZyxjtb-6TzU?usp=sharing" target="_blank" class="compact-card shadow-sm">
+                    <div class="icon-box bg-primary"><i class="fas fa-university"></i></div>
+                    <div><h6 class="fw-bold m-0 text-dark">Manuales AMIR</h6><small class="text-muted">Colección Completa</small></div>
+                </a>
+            </div>
+        </div>
+
+        <h6 class="fw-bold text-secondary text-uppercase small mb-3 ls-1 border-bottom pb-2">Guías de Práctica Clínica</h6>
+        <div class="row g-2 mb-4">
+            <div class="col-6 col-md-4 col-lg"><a href="https://drive.google.com/drive/folders/1TCpuBJ_kxG-O__-UJYiJNPF3jNqPC_EQ?usp=sharing" target="_blank" class="compact-card shadow-sm p-2"><div class="icon-box bg-danger" style="width:35px; height:35px; font-size:1rem;"><i class="fas fa-baby-carriage"></i></div><span class="fw-bold small">Gineco y Obs.</span></a></div>
+            <div class="col-6 col-md-4 col-lg"><a href="https://drive.google.com/drive/folders/12Na9SodCESI4WlDlap8_Iok-XTinfCdl?usp=sharing" target="_blank" class="compact-card shadow-sm p-2"><div class="icon-box bg-primary" style="width:35px; height:35px; font-size:1rem;"><i class="fas fa-heartbeat"></i></div><span class="fw-bold small">Medicina Interna</span></a></div>
+            <div class="col-6 col-md-4 col-lg"><a href="https://drive.google.com/drive/folders/1huqORVMpreFeJ8zLiMa5g5xkSjSKybQS?usp=sharing" target="_blank" class="compact-card shadow-sm p-2"><div class="icon-box bg-info" style="width:35px; height:35px; font-size:1rem;"><i class="fas fa-child"></i></div><span class="fw-bold small">Pediatría</span></a></div>
+            <div class="col-6 col-md-4 col-lg"><a href="https://drive.google.com/drive/folders/1He77rccRFzw_kTaLICsj0gOh3c370F6o?usp=sharing" target="_blank" class="compact-card shadow-sm p-2"><div class="icon-box bg-warning text-dark" style="width:35px; height:35px; font-size:1rem;"><i class="fas fa-ambulance"></i></div><span class="fw-bold small">Urgencias</span></a></div>
+            <div class="col-12 col-md-4 col-lg"><a href="https://drive.google.com/drive/folders/1dO1vvK0ycwOJq2KOgPYLbfU_T_Dx0cNu?usp=sharing" target="_blank" class="compact-card shadow-sm p-2"><div class="icon-box bg-success" style="width:35px; height:35px; font-size:1rem;"><i class="fas fa-user-md"></i></div><span class="fw-bold small">Cirugía</span></a></div>
+        </div>
+
+        <h6 class="fw-bold text-secondary text-uppercase small mb-3 ls-1 border-bottom pb-2">Libros por Semestre</h6>
+        <div class="accordion" id="accordionSemestres">
+
+            <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#sem1"><span class="badge bg-primary me-3">1°</span> PRIMER SEMESTRE</button></h2>
+                <div id="sem1" class="accordion-collapse collapse show" data-bs-parent="#accordionSemestres">
+                    <div class="accordion-body">
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat1-anat">Anatomía 1 <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat1-anat" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/113yYSAj-Scpfh4p3EOpT5IBI_gWTK0aW/view?usp=drive_link" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Anatomía de Moore (9a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/113yYSAj-Scpfh4p3EOpT5IBI_gWTK0aW/view?usp=drive_link" data-title="Anatomía de Moore"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/16wGt2rq9gHjEGe0ht5tXSLyMZkSWuH9s/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Anatomía y Fisiología Tortora (15a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/16wGt2rq9gHjEGe0ht5tXSLyMZkSWuH9s/view?usp=sharing" data-title="Anatomía y Fisiología Tortora"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1HOvPQiwNEYPOrj7j0csXxuP4aHlUNvGt/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Atlas de Anatomía Netter (8a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1HOvPQiwNEYPOrj7j0csXxuP4aHlUNvGt/view?usp=sharing" data-title="Atlas de Anatomía Netter"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1jMW1R2jiiQkcJTYc8naT2r5Hj8-RUkqT/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-bolt"></i> Flashcards Netter (4a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1jMW1R2jiiQkcJTYc8naT2r5Hj8-RUkqT/view?usp=sharing" data-title="Flashcards Netter"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/drive/folders/1a7cA52Zcumi0goLdUARdtvgEKSZBUOxt?usp=sharing" target="_blank" class="book-link"><i class="fas fa-folder-open"></i> Anatomía de Rouviere (Tomos 1-4)</a><button class="btn-fav" data-url="https://drive.google.com/drive/folders/1a7cA52Zcumi0goLdUARdtvgEKSZBUOxt?usp=sharing" data-title="Anatomía de Rouviere"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1iHSldFAnwp65U2RiRtr-MdFt4AQcam1f/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Anatomía de Gray</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1iHSldFAnwp65U2RiRtr-MdFt4AQcam1f/view?usp=sharing" data-title="Anatomía de Gray"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat1-fisio">Fisiología 1 <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat1-fisio" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1VI-chM6Wt9Z9Br6QrwwZjzdiI6esFDrT/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología de Guyton (14a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1VI-chM6Wt9Z9Br6QrwwZjzdiI6esFDrT/view?usp=sharing" data-title="Fisiología de Guyton"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1LcqP1ktDdJWJI8YAJKjZE4MzTU5f8aGj/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología de TresGuerres</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1LcqP1ktDdJWJI8YAJKjZE4MzTU5f8aGj/view?usp=sharing" data-title="Fisiología de TresGuerres"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/12xnQfajZRfdcx8LlXm54oHRMi2DFGLUA/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología Ganong (23a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/12xnQfajZRfdcx8LlXm54oHRMi2DFGLUA/view?usp=sharing" data-title="Fisiología Ganong"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/15nyYGgvSpyxRGYYa7wv5wKTIQEjjDxpy/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología de Costanzo (5a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/15nyYGgvSpyxRGYYa7wv5wKTIQEjjDxpy/view?usp=sharing" data-title="Fisiología de Costanzo"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1F4-GdoDh-h9e3GVX2A8sNg7lrtgWVSgy/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología Best & Taylor</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1F4-GdoDh-h9e3GVX2A8sNg7lrtgWVSgy/view?usp=sharing" data-title="Fisiología Best & Taylor"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat1-histo">Histología 1 <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat1-histo" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1wTPOszRgIFz1MhD-2-bFxEDjjCBdR0d8/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Histología de Ross (8a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1wTPOszRgIFz1MhD-2-bFxEDjjCBdR0d8/view?usp=sharing" data-title="Histología de Ross"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1tqb5qXZ9-5JRTUG-zNP0pXSvnvo5YJUt/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Histología de Geneser (4a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1tqb5qXZ9-5JRTUG-zNP0pXSvnvo5YJUt/view?usp=sharing" data-title="Histología de Geneser"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1GmQOlX0A3DMMN_kLGvYeyUOqjey7DBUF/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Histología de Gartner (6a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1GmQOlX0A3DMMN_kLGvYeyUOqjey7DBUF/view?usp=sharing" data-title="Histología de Gartner"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat1-embrio">Embriología 1 <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat1-embrio" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1jCg-uzq390tVCm9MHv7OnLtZvi8v_HPu/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Embriología de Langman (15a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1jCg-uzq390tVCm9MHv7OnLtZvi8v_HPu/view?usp=sharing" data-title="Embriología de Langman"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/12HMC_6WEWeGkFAx4l18voAAvI7Wxl8ey/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Embriología de Moore (11a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/12HMC_6WEWeGkFAx4l18voAAvI7Wxl8ey/view?usp=sharing" data-title="Embriología de Moore"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1x1wQKP-FJIgkH5jzfZ8fBhXUhiKlfzsD/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Embriología de Arteaga (3a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1x1wQKP-FJIgkH5jzfZ8fBhXUhiKlfzsD/view?usp=sharing" data-title="Embriología de Arteaga"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat1-bio">Bioquímica 1 <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat1-bio" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1dJPewNJemp1Iz7JN8SLldwrbUQ5pPUP0/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Bioquímica de Harper (32a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1dJPewNJemp1Iz7JN8SLldwrbUQ5pPUP0/view?usp=sharing" data-title="Bioquímica de Harper"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1ANUDpBsj2-Y_HKAF5Gw9X_aW7aAagNjk/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Bioquímica de Baynes (5a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1ANUDpBsj2-Y_HKAF5Gw9X_aW7aAagNjk/view?usp=sharing" data-title="Bioquímica de Baynes"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1yVfthjbwfE88OYWv6k19HBbUpHfEs9sr/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Bioquímica Lehninger (7a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1yVfthjbwfE88OYWv6k19HBbUpHfEs9sr/view?usp=sharing" data-title="Bioquímica Lehninger"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1zlhwzEaR4UgHco-QhMupH6jHN3nlVnPY/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> LIR Bioquímica (7a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1zlhwzEaR4UgHco-QhMupH6jHN3nlVnPY/view?usp=sharing" data-title="LIR Bioquímica"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat1-est">Estadística <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat1-est" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1b1tIC4HngbFUbPFuUBTIHR4yVebC9URF/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Bioestadística de Daniel</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1b1tIC4HngbFUbPFuUBTIHR4yVebC9URF/view?usp=sharing" data-title="Bioestadística de Daniel"><i class="far fa-star"></i></button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sem2"><span class="badge bg-primary me-3">2°</span> SEGUNDO SEMESTRE</button></h2>
+                <div id="sem2" class="accordion-collapse collapse" data-bs-parent="#accordionSemestres">
+                    <div class="accordion-body">
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat2-embrio">Embriología 2 <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat2-embrio" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1jCg-uzq390tVCm9MHv7OnLtZvi8v_HPu/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Embriología de Langman (15a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1jCg-uzq390tVCm9MHv7OnLtZvi8v_HPu/view?usp=sharing" data-title="Embriología de Langman"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/12HMC_6WEWeGkFAx4l18voAAvI7Wxl8ey/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Embriología de Moore (11a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/12HMC_6WEWeGkFAx4l18voAAvI7Wxl8ey/view?usp=sharing" data-title="Embriología de Moore"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1x1wQKP-FJIgkH5jzfZ8fBhXUhiKlfzsD/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Embriología de Arteaga (3a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1x1wQKP-FJIgkH5jzfZ8fBhXUhiKlfzsD/view?usp=sharing" data-title="Embriología de Arteaga"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat2-histo">Histología 2 <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat2-histo" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1wTPOszRgIFz1MhD-2-bFxEDjjCBdR0d8/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Histología de Ross (8a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1wTPOszRgIFz1MhD-2-bFxEDjjCBdR0d8/view?usp=sharing" data-title="Histología de Ross"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1tqb5qXZ9-5JRTUG-zNP0pXSvnvo5YJUt/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Histología de Geneser (4a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1tqb5qXZ9-5JRTUG-zNP0pXSvnvo5YJUt/view?usp=sharing" data-title="Histología de Geneser"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1GmQOlX0A3DMMN_kLGvYeyUOqjey7DBUF/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Histología de Gartner (6a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1GmQOlX0A3DMMN_kLGvYeyUOqjey7DBUF/view?usp=sharing" data-title="Histología de Gartner"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat2-anat">Anatomía 2 <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat2-anat" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/113yYSAj-Scpfh4p3EOpT5IBI_gWTK0aW/view?usp=drive_link" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Anatomía de Moore (9a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/113yYSAj-Scpfh4p3EOpT5IBI_gWTK0aW/view?usp=drive_link" data-title="Anatomía de Moore"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/16wGt2rq9gHjEGe0ht5tXSLyMZkSWuH9s/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Anatomía y Fisiología Tortora (15a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/16wGt2rq9gHjEGe0ht5tXSLyMZkSWuH9s/view?usp=sharing" data-title="Anatomía y Fisiología Tortora"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1HOvPQiwNEYPOrj7j0csXxuP4aHlUNvGt/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Atlas de Anatomía Netter (8a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1HOvPQiwNEYPOrj7j0csXxuP4aHlUNvGt/view?usp=sharing" data-title="Atlas de Anatomía Netter"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1jMW1R2jiiQkcJTYc8naT2r5Hj8-RUkqT/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-bolt"></i> Flashcards Netter (4a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1jMW1R2jiiQkcJTYc8naT2r5Hj8-RUkqT/view?usp=sharing" data-title="Flashcards Netter"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/drive/folders/1a7cA52Zcumi0goLdUARdtvgEKSZBUOxt?usp=sharing" target="_blank" class="book-link"><i class="fas fa-folder-open"></i> Anatomía de Rouviere (Tomos 1-4)</a><button class="btn-fav" data-url="https://drive.google.com/drive/folders/1a7cA52Zcumi0goLdUARdtvgEKSZBUOxt?usp=sharing" data-title="Anatomía de Rouviere"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1iHSldFAnwp65U2RiRtr-MdFt4AQcam1f/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Anatomía de Gray</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1iHSldFAnwp65U2RiRtr-MdFt4AQcam1f/view?usp=sharing" data-title="Anatomía de Gray"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat2-fisio">Fisiología 2 <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat2-fisio" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1VI-chM6Wt9Z9Br6QrwwZjzdiI6esFDrT/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología de Guyton (14a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1VI-chM6Wt9Z9Br6QrwwZjzdiI6esFDrT/view?usp=sharing" data-title="Fisiología de Guyton"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1LcqP1ktDdJWJI8YAJKjZE4MzTU5f8aGj/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología de TresGuerres</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1LcqP1ktDdJWJI8YAJKjZE4MzTU5f8aGj/view?usp=sharing" data-title="Fisiología de TresGuerres"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/12xnQfajZRfdcx8LlXm54oHRMi2DFGLUA/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología Ganong (23a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/12xnQfajZRfdcx8LlXm54oHRMi2DFGLUA/view?usp=sharing" data-title="Fisiología Ganong"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/15nyYGgvSpyxRGYYa7wv5wKTIQEjjDxpy/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología de Costanzo (5a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/15nyYGgvSpyxRGYYa7wv5wKTIQEjjDxpy/view?usp=sharing" data-title="Fisiología de Costanzo"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1F4-GdoDh-h9e3GVX2A8sNg7lrtgWVSgy/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología Best & Taylor</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1F4-GdoDh-h9e3GVX2A8sNg7lrtgWVSgy/view?usp=sharing" data-title="Fisiología Best & Taylor"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat2-inmu">Inmunología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat2-inmu" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1l5qSjxRlZmQwNHpMn-sULIvdat18Cwa7/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Kuby Inmunología (8a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1l5qSjxRlZmQwNHpMn-sULIvdat18Cwa7/view?usp=sharing" data-title="Kuby Inmunología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1jX3bDn4GaVdZy8TI6BtiJNdO4sbfLJoy/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Rojas Inmunología (4a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1jX3bDn4GaVdZy8TI6BtiJNdO4sbfLJoy/view?usp=sharing" data-title="Rojas Inmunología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/18MLC297jrauYoG4IR2xySSzfV4esJk6L/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Abbas Inmunología Cel. y Mol. (10a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/18MLC297jrauYoG4IR2xySSzfV4esJk6L/view?usp=sharing" data-title="Abbas Inmunología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/16ehyEQNCUZvvOlczVdlGl4-yFyVc7bUX/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Male Inmunología (9a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/16ehyEQNCUZvvOlczVdlGl4-yFyVc7bUX/view?usp=sharing" data-title="Male Inmunología"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat2-prope">Clínica Propedéutica <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat2-prope" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1UzbbB2JYU6yyl414C1tw7TkINedMWbxi/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Bates Guía de Exploración (13a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1UzbbB2JYU6yyl414C1tw7TkINedMWbxi/view?usp=sharing" data-title="Bates Guía de Exploración"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1Ycusii7DqPOienplg5xAAFWvsGXNcQ8l/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Argente Semiología Médica (2a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1Ycusii7DqPOienplg5xAAFWvsGXNcQ8l/view?usp=sharing" data-title="Argente Semiología Médica"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/17ScK1hBOrU59WjgaQAgOlY4eMmRhrRIf/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Manual Moderno de Propedéutica</a><button class="btn-fav" data-url="https://drive.google.com/file/d/17ScK1hBOrU59WjgaQAgOlY4eMmRhrRIf/view?usp=sharing" data-title="Manual Moderno de Propedéutica"><i class="far fa-star"></i></button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sem3"><span class="badge bg-primary me-3">3°</span> TERCER SEMESTRE</button></h2>
+                <div id="sem3" class="accordion-collapse collapse" data-bs-parent="#accordionSemestres">
+                    <div class="accordion-body">
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat3-salud">Salud Pública <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat3-salud" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1hvkCqXT1bjP2Geuz0fVdT06D9O_ZmoJ-/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Piedrola Gil Medicina Preventiva y SP</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1hvkCqXT1bjP2Geuz0fVdT06D9O_ZmoJ-/view?usp=sharing" data-title="Piedrola Gil Medicina Preventiva"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1sZN3znWET_lWfjXdD9fN6SaispgBe5eu/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Manual de Epidemiología y SP (3a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1sZN3znWET_lWfjXdD9fN6SaispgBe5eu/view?usp=sharing" data-title="Manual de Epidemiología"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat3-epi">Epidemiología 1 <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat3-epi" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1sZN3znWET_lWfjXdD9fN6SaispgBe5eu/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Manual de Epidemiología y SP (3a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1sZN3znWET_lWfjXdD9fN6SaispgBe5eu/view?usp=sharing" data-title="Manual de Epidemiología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1O-Y7a7np3jm6A727BfOUGQHwV-Kj-UwB/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Epidemiología Clínica (2a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1O-Y7a7np3jm6A727BfOUGQHwV-Kj-UwB/view?usp=sharing" data-title="Epidemiología Clínica"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1f0zshJ69TYO0K308kWbOdgzvCHNO7QfD/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Gordis Epidemiología (6a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1f0zshJ69TYO0K308kWbOdgzvCHNO7QfD/view?usp=sharing" data-title="Gordis Epidemiología"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat3-farma">Farmacología 1 <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat3-farma" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1-3mwRFRb--2Oroh0ZDLFgkfBBjimFK8M/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Katzung Farmacología (15a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1-3mwRFRb--2Oroh0ZDLFgkfBBjimFK8M/view?usp=sharing" data-title="Katzung Farmacología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1jkisEXaVVlQm7XizjsCiffH04OXvOj7K/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Goodman y Gilman (14a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1jkisEXaVVlQm7XizjsCiffH04OXvOj7K/view?usp=sharing" data-title="Goodman y Gilman"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1ONo5ZjAITRZ7RbmfL2dk8ETZexGVetOB/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-bolt"></i> Rang & Dale Flashcards (2a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1ONo5ZjAITRZ7RbmfL2dk8ETZexGVetOB/view?usp=sharing" data-title="Rang & Dale Flashcards"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1MPD8ekERJFbAuJXX_ILsPiuoL3rFyvM5/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> LIR Farmacología</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1MPD8ekERJFbAuJXX_ILsPiuoL3rFyvM5/view?usp=sharing" data-title="LIR Farmacología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1K0sLaipob7kZf4W4ua_hSE0BWAsPzo-6/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-bolt"></i> Brenner Flashcards (4a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1K0sLaipob7kZf4W4ua_hSE0BWAsPzo-6/view?usp=sharing" data-title="Brenner Flashcards"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat3-tec">Técnicas Quirúrgicas <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat3-tec" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1RYwzvXC7SATWmLYCQbx42E95DZqeN0sG/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Skandalakis Técnicas Quirúrgicas (5a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1RYwzvXC7SATWmLYCQbx42E95DZqeN0sG/view?usp=sharing" data-title="Skandalakis Técnicas Quirúrgicas"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1W3_DyaIvRqLiU2iEu1ZIsAK-82b8IOGT/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Schwartz Principios de Cirugía (11a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1W3_DyaIvRqLiU2iEu1ZIsAK-82b8IOGT/view?usp=sharing" data-title="Schwartz Cirugía"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/drive/folders/1ga1Y0f2yYSyVdq0zg04vOPdNG8rV8i60?usp=sharing" target="_blank" class="book-link"><i class="fas fa-folder-open"></i> Cirugía de Michans (Tomos 1-2)</a><button class="btn-fav" data-url="https://drive.google.com/drive/folders/1ga1Y0f2yYSyVdq0zg04vOPdNG8rV8i60?usp=sharing" data-title="Cirugía de Michans"><i class="far fa-star"></i></button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sem4"><span class="badge bg-primary me-3">4°</span> CUARTO SEMESTRE</button></h2>
+                <div id="sem4" class="accordion-collapse collapse" data-bs-parent="#accordionSemestres">
+                    <div class="accordion-body">
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat4-derma">Dermatología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat4-derma" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1Si1_fPy1_TokOIuzBshc0h2RVrvFsK28/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Manual Washington de Dermatología</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1Si1_fPy1_TokOIuzBshc0h2RVrvFsK28/view?usp=sharing" data-title="Manual Washington Derma"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1qOauM6h8U3ynxdSL7Upxvn1dv6SspLiA/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Arenas Dermatología (7a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1qOauM6h8U3ynxdSL7Upxvn1dv6SspLiA/view?usp=sharing" data-title="Arenas Dermatología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1KgglV7bofEKNwyfB0gMUzXQbS9mBQLfI/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Ferrándiz Dermatología (4a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1KgglV7bofEKNwyfB0gMUzXQbS9mBQLfI/view?usp=sharing" data-title="Ferrándiz Dermatología"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat4-oto">Otorrinolaringología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat4-oto" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1hsWhDf9wbK-zlP75ILfhAs8b7ut3tZwF/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Otorrinolaringología y Cx de Cabeza y Cuello (3a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1hsWhDf9wbK-zlP75ILfhAs8b7ut3tZwF/view?usp=sharing" data-title="Otorrinolaringología y Cx"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1gs-cfkYxOXh8olM2tQoHVRxTzhSDDscu/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Otorrino en Atención Primaria</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1gs-cfkYxOXh8olM2tQoHVRxTzhSDDscu/view?usp=sharing" data-title="Otorrino Atención Primaria"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1S-TB8UCMjvIAdXqFO2gK6PmAKxP_C1jv/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Escajadillo Otorrino</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1S-TB8UCMjvIAdXqFO2gK6PmAKxP_C1jv/view?usp=sharing" data-title="Escajadillo Otorrino"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat4-farma">Farmacología Aplicada <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat4-farma" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1-3mwRFRb--2Oroh0ZDLFgkfBBjimFK8M/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Katzung Farmacología (15a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1-3mwRFRb--2Oroh0ZDLFgkfBBjimFK8M/view?usp=sharing" data-title="Katzung Farmacología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1jkisEXaVVlQm7XizjsCiffH04OXvOj7K/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Goodman y Gilman (14a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1jkisEXaVVlQm7XizjsCiffH04OXvOj7K/view?usp=sharing" data-title="Goodman y Gilman"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1ONo5ZjAITRZ7RbmfL2dk8ETZexGVetOB/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-bolt"></i> Rang & Dale Flashcards (2a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1ONo5ZjAITRZ7RbmfL2dk8ETZexGVetOB/view?usp=sharing" data-title="Rang & Dale Flashcards"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1MPD8ekERJFbAuJXX_ILsPiuoL3rFyvM5/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> LIR Farmacología</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1MPD8ekERJFbAuJXX_ILsPiuoL3rFyvM5/view?usp=sharing" data-title="LIR Farmacología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1K0sLaipob7kZf4W4ua_hSE0BWAsPzo-6/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-bolt"></i> Brenner Flashcards (4a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1K0sLaipob7kZf4W4ua_hSE0BWAsPzo-6/view?usp=sharing" data-title="Brenner Flashcards"><i class="far fa-star"></i></button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sem5"><span class="badge bg-primary me-3">5°</span> QUINTO SEMESTRE</button></h2>
+                <div id="sem5" class="accordion-collapse collapse" data-bs-parent="#accordionSemestres">
+                    <div class="accordion-body">
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat5-psico">Psicopatología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat5-psico" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/drive/folders/1K0gLwjpITu_iofzS4SRjyS-MJzwK7BJI?usp=sharing" target="_blank" class="book-link"><i class="fas fa-folder-open"></i> Manual de Psicopatología Amparo (Vol. 1-2)</a><button class="btn-fav" data-url="https://drive.google.com/drive/folders/1K0gLwjpITu_iofzS4SRjyS-MJzwK7BJI?usp=sharing" data-title="Manual Psicopatología Amparo"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1GJUXjENdpBSMbsfjhJmv9jPMdcuLapOv/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Manual de Psiquiatría Clínica y Psicopatología</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1GJUXjENdpBSMbsfjhJmv9jPMdcuLapOv/view?usp=sharing" data-title="Manual Psiquiatría Clínica"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1ybt_K56pX8wUqqpcTdhz9FKAN-_iu2LH/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Psicología Médica y Salud Mental</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1ybt_K56pX8wUqqpcTdhz9FKAN-_iu2LH/view?usp=sharing" data-title="Psicología Médica"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1bOyonflZUruZkPY9OL-XN0VQTneLhGb4/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Psicopatología Sarason (11a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1bOyonflZUruZkPY9OL-XN0VQTneLhGb4/view?usp=sharing" data-title="Psicopatología Sarason"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/18Zknc6TATzTPHKz0_4yLrUjlfF6fR_05/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Psiquiatría Clínica Lange</a><button class="btn-fav" data-url="https://drive.google.com/file/d/18Zknc6TATzTPHKz0_4yLrUjlfF6fR_05/view?usp=sharing" data-title="Psiquiatría Clínica Lange"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat5-trauma">Traumatología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat5-trauma" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/15bMdPzfnBwTsZS39SgphE45XG6BPn_ep/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Traumatología y Ortopedia (Generalidades)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/15bMdPzfnBwTsZS39SgphE45XG6BPn_ep/view?usp=sharing" data-title="Traumatología Generalidades"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1swfruqWZgqs9yAX1_IgvgGzS-an9FFUZ/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Manual Básico de Urgencias en Trauma</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1swfruqWZgqs9yAX1_IgvgGzS-an9FFUZ/view?usp=sharing" data-title="Manual Urgencias Trauma"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1zfb1vNvrjy1bzb5y32etS_fQrPfBWdj4/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Manual de Inmovilizaciones y Vendajes</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1zfb1vNvrjy1bzb5y32etS_fQrPfBWdj4/view?usp=sharing" data-title="Manual Inmovilizaciones"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat5-infec">Infectología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat5-infec" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1kd2xFTulwWDYrv8ACmo84jyj_xFJw_T6/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Kumate Infectología (18a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1kd2xFTulwWDYrv8ACmo84jyj_xFJw_T6/view?usp=sharing" data-title="Kumate Infectología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1ArY9K_ZP0w-AvTKWYJ2XEPE6Ic5TM3t_/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Infectología Pediátrica Napoleón (8a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1ArY9K_ZP0w-AvTKWYJ2XEPE6Ic5TM3t_/view?usp=sharing" data-title="Infectología Pediátrica Napoleón"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1fmcuk7ggfAGnXya6GgANAMEeQK6maUfP/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Mandell y Douglas Enf. Infecciosas</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1fmcuk7ggfAGnXya6GgANAMEeQK6maUfP/view?usp=sharing" data-title="Mandell Enfermedades Infecciosas"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat5-geria">Geriatría <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat5-geria" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1ruiyY6jwM7wq4J0A3TP0Muc6jxCpQIhp/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Principios de Geriatría y Gerontología Millan</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1ruiyY6jwM7wq4J0A3TP0Muc6jxCpQIhp/view?usp=sharing" data-title="Principios Geriatría Millan"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1rH45uD7suFJEsXbltkmukFzGbS3vTFO8/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Principios de Geriatría (Generalidades)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1rH45uD7suFJEsXbltkmukFzGbS3vTFO8/view?usp=sharing" data-title="Principios Geriatría Generalidades"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1rh_UQPZjpH3zEQ_VyD9HN67nX9wYVmuB/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Tratado de Geriatría para Residentes</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1rh_UQPZjpH3zEQ_VyD9HN67nX9wYVmuB/view?usp=sharing" data-title="Tratado Geriatría Residentes"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/17bIIyHYl_u09Lzq-Bu9_Dv3cDRJsjALQ/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Tratado de Medicina Geriátrica</a><button class="btn-fav" data-url="https://drive.google.com/file/d/17bIIyHYl_u09Lzq-Bu9_Dv3cDRJsjALQ/view?usp=sharing" data-title="Tratado Medicina Geriátrica"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat5-bioetica">Ética y Bioética <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat5-bioetica" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1N8rJJp8Fqgj3Zcbi9TR4V13pFan0X6cP/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Compendio Medicina Legal, Deontología y Bioética</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1N8rJJp8Fqgj3Zcbi9TR4V13pFan0X6cP/view?usp=sharing" data-title="Compendio Medicina Legal"><i class="far fa-star"></i></button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sem6"><span class="badge bg-primary me-3">6°</span> SEXTO SEMESTRE</button></h2>
+                <div id="sem6" class="accordion-collapse collapse" data-bs-parent="#accordionSemestres">
+                    <div class="accordion-body">
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat6-neuro">Neurología Clínica <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat6-neuro" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1e0RMmqK1I9yD4lhGFKe436JU18anENUA/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Neurología Clínica Rangel Guerra</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1e0RMmqK1I9yD4lhGFKe436JU18anENUA/view?usp=sharing" data-title="Neurología Clínica Rangel Guerra"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1f4FIpbgZQ7MCfGYwJe8dlF_V58vwL9PA/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Neurología Clínica Orlando Garcea</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1f4FIpbgZQ7MCfGYwJe8dlF_V58vwL9PA/view?usp=sharing" data-title="Neurología Clínica Orlando Garcea"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1Nkasa8wR62-Fcyu7ji_AEybDCmMr8Y_W/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Más de 100 Escalas en Neurología</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1Nkasa8wR62-Fcyu7ji_AEybDCmMr8Y_W/view?usp=sharing" data-title="100 Escalas Neurología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/15AuA5--Yf36Va3VV5IjmzGXIQyR42_tp/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Semiología en Neurología Mellado</a><button class="btn-fav" data-url="https://drive.google.com/file/d/15AuA5--Yf36Va3VV5IjmzGXIQyR42_tp/view?usp=sharing" data-title="Semiología Neurología Mellado"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1TJrZQtXAub9HPwtQO1oNLp75cgoEZY7c/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Neurología Snell</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1TJrZQtXAub9HPwtQO1oNLp75cgoEZY7c/view?usp=sharing" data-title="Neurología Snell"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1ih9C2X7XZz5cE_tIp0t_jubBIabyP1EQ/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Principios de Neurología Adams (8a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1ih9C2X7XZz5cE_tIp0t_jubBIabyP1EQ/view?usp=sharing" data-title="Neurología Adams"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat6-endo">Endocrinología Básica <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat6-endo" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1BGSSY749jtvGNcKV5iqSyhR0trzsAn3Z/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Endocrinología Greenspan (10a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1BGSSY749jtvGNcKV5iqSyhR0trzsAn3Z/view?usp=sharing" data-title="Endocrinología Greenspan"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1qsfWDqV7faOqfT1ksdUTbUMoknVpSIP1/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Manual de Endocrinología y Metabolismo (5a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1qsfWDqV7faOqfT1ksdUTbUMoknVpSIP1/view?usp=sharing" data-title="Manual Endocrinología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1Uw1YrByYw1plwr48puIKoPWWgbZ8cJ1m/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Williams Tratado de Endocrinología</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1Uw1YrByYw1plwr48puIKoPWWgbZ8cJ1m/view?usp=sharing" data-title="Williams Tratado de Endocrinología"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat6-oftal">Oftalmología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat6-oftal" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/17UUbErEpkUxxcbAgb2dwt_UpUm3iuiz6/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Introducción a la Oftalmología Pelayes</a><button class="btn-fav" data-url="https://drive.google.com/file/d/17UUbErEpkUxxcbAgb2dwt_UpUm3iuiz6/view?usp=sharing" data-title="Introducción Oftalmología Pelayes"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/17CvjgS0g1fxzEwNVCZEnGEZz8tD6fPNq/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Oftalmología Myron (5a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/17CvjgS0g1fxzEwNVCZEnGEZz8tD6fPNq/view?usp=sharing" data-title="Oftalmología Myron"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1uH53Lk6A4sYkV6XipnWtpet4R3V8lIBX/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Oftalmología Práctica General Graue</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1uH53Lk6A4sYkV6XipnWtpet4R3V8lIBX/view?usp=sharing" data-title="Oftalmología Graue"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat6-legal">Medicina Legal <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat6-legal" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1N8rJJp8Fqgj3Zcbi9TR4V13pFan0X6cP/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Compendio Medicina Legal, Deontología y Bioética</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1N8rJJp8Fqgj3Zcbi9TR4V13pFan0X6cP/view?usp=sharing" data-title="Compendio Medicina Legal"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1Sjsap5XS0FPKC4zwgMFWCHK8D7sipqnb/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Medicina Legal y Toxicología Cañadas</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1Sjsap5XS0FPKC4zwgMFWCHK8D7sipqnb/view?usp=sharing" data-title="Medicina Legal Cañadas"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/10GR-oEzeCRvK_k9Ei8vKDD8sJUO3Gg6s/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Constitución Política del Estado de Chiapas</a><button class="btn-fav" data-url="https://drive.google.com/file/d/10GR-oEzeCRvK_k9Ei8vKDD8sJUO3Gg6s/view?usp=sharing" data-title="Constitución Chiapas"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1m4UOzmyHbu1avwXZgNSIXk0JICtjefQI/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Código Penal del Estado de Chiapas</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1m4UOzmyHbu1avwXZgNSIXk0JICtjefQI/view?usp=sharing" data-title="Código Penal Chiapas"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/14XM5CL_xlMvglBO22I1-CqHPBeBurAPZ/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Medicina Legal Vargas Alvarado</a><button class="btn-fav" data-url="https://drive.google.com/file/d/14XM5CL_xlMvglBO22I1-CqHPBeBurAPZ/view?usp=sharing" data-title="Medicina Legal Vargas Alvarado"><i class="far fa-star"></i></button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sem7"><span class="badge bg-primary me-3">7°</span> SÉPTIMO SEMESTRE</button></h2>
+                <div id="sem7" class="accordion-collapse collapse" data-bs-parent="#accordionSemestres">
+                    <div class="accordion-body">
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat7-gbe">Ginecología Evidencias (GPC) <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat7-gbe" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1u_cGSD6I2oUYUksUnWJKaATDVhg354bd/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> GPC Control Prenatal</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1u_cGSD6I2oUYUksUnWJKaATDVhg354bd/view?usp=sharing" data-title="GPC Control Prenatal"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1ZsQ-tdNOek92uZ6Qt98k7gKA9Ai6ZTAA/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> GPC Amenaza de Aborto</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1ZsQ-tdNOek92uZ6Qt98k7gKA9Ai6ZTAA/view?usp=sharing" data-title="GPC Amenaza de Aborto"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1tTrkdR46dRRfRSr5Sgux6n_uTK_ulVFu/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> GPC Vigilancia y Manejo de Parto</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1tTrkdR46dRRfRSr5Sgux6n_uTK_ulVFu/view?usp=sharing" data-title="GPC Vigilancia Parto"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/11xwxp7DpHQO1ArczimDZzJoewD6k5IKM/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> GPC Enf. Hipertensivas del Embarazo</a><button class="btn-fav" data-url="https://drive.google.com/file/d/11xwxp7DpHQO1ArczimDZzJoewD6k5IKM/view?usp=sharing" data-title="GPC Hipertensivas Embarazo"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1-qtVTX_ZGrhQA0ng4--Bch8jVwuYhast/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> GPC Parto Pretérmino</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1-qtVTX_ZGrhQA0ng4--Bch8jVwuYhast/view?usp=sharing" data-title="GPC Parto Pretérmino"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1-6u1JWMiwLj9hziAYT8RbAQYqYX0Gv7U/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> GPC ITU en el Embarazo</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1-6u1JWMiwLj9hziAYT8RbAQYqYX0Gv7U/view?usp=sharing" data-title="GPC ITU Embarazo"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1nBWkslXNWa0Oj2AxHgy4dep75-ixRDJ7/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> GPC Hemorragia Posparto</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1nBWkslXNWa0Oj2AxHgy4dep75-ixRDJ7/view?usp=sharing" data-title="GPC Hemorragia Posparto"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1vQIEf03mBk8B_9a8oHisByS7BJVlR4Ta/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> GPC Placenta Previa</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1vQIEf03mBk8B_9a8oHisByS7BJVlR4Ta/view?usp=sharing" data-title="GPC Placenta Previa"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/19c8FPenE2eZw3leuV1HOxEjEMs678O65/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> GPC Hemorragia Obstétrica 2da Mitad</a><button class="btn-fav" data-url="https://drive.google.com/file/d/19c8FPenE2eZw3leuV1HOxEjEMs678O65/view?usp=sharing" data-title="GPC Hemorragia 2da Mitad"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1klJbRx2ZHr0EKEan9XlMxKrN83ZjNoGt/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> GPC Diabetes en el Embarazo</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1klJbRx2ZHr0EKEan9XlMxKrN83ZjNoGt/view?usp=sharing" data-title="GPC Diabetes Embarazo"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1VvqOYthV5p-E8nkZNXqlayOdxaiQiejs/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> GPC Sepsis Puerperal</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1VvqOYthV5p-E8nkZNXqlayOdxaiQiejs/view?usp=sharing" data-title="GPC Sepsis Puerperal"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1FTWsrt27s9O35L9-sUzIwBehFn-d-Xql/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> GPC Enf. Trofoblástica Gestacional</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1FTWsrt27s9O35L9-sUzIwBehFn-d-Xql/view?usp=sharing" data-title="GPC Enf. Trofoblástica"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat7-semio">Semiología Ginec. <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat7-semio" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1icTEO0cdn8m-1S1a8MtChBAhobgKnMgp/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Manual Hopkins Ginecología y Obs. (6a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1icTEO0cdn8m-1S1a8MtChBAhobgKnMgp/view?usp=sharing" data-title="Manual Hopkins Ginecología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1XEG-L9cQaGVaAfALA9qawD5pg_hR33Rq/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Ultrasonidos en Obs. y Ginecología</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1XEG-L9cQaGVaAfALA9qawD5pg_hR33Rq/view?usp=sharing" data-title="Ultrasonidos Obs y Ginec"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1K2vtNGZ6I9Qsrj4Dm83vK_C8J7rVJyzl/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Callen Ecografía en Obs. y Ginec. (6a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1K2vtNGZ6I9Qsrj4Dm83vK_C8J7rVJyzl/view?usp=sharing" data-title="Callen Ecografía"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1PJFshNDWBpQC_jyS1wOjh248-Ba7JDRE/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Carvajal Manual de Obstetricia</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1PJFshNDWBpQC_jyS1wOjh248-Ba7JDRE/view?usp=sharing" data-title="Carvajal Manual Obstetricia"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat7-pato">Patología Ginec. <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat7-pato" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1_4YA9QBr5xYVVXc70j6rDAtcQ2YGFkrs/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Williams Ginecología (4a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1_4YA9QBr5xYVVXc70j6rDAtcQ2YGFkrs/view?usp=sharing" data-title="Williams Ginecología"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat7-tec">Técnicas Quir. Ginec. <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat7-tec" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1RYwzvXC7SATWmLYCQbx42E95DZqeN0sG/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Skandalakis Técnicas Quirúrgicas (5a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1RYwzvXC7SATWmLYCQbx42E95DZqeN0sG/view?usp=sharing" data-title="Skandalakis Técnicas"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1W3_DyaIvRqLiU2iEu1ZIsAK-82b8IOGT/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Schwartz Principios de Cirugía (11a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1W3_DyaIvRqLiU2iEu1ZIsAK-82b8IOGT/view?usp=sharing" data-title="Schwartz Cirugía"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat7-uro">Urología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat7-uro" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1wmUGEJDqIqQYNjylj7vCCSt7BAAK_XNd/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Smith y Tanagho Urología General (11a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1wmUGEJDqIqQYNjylj7vCCSt7BAAK_XNd/view?usp=sharing" data-title="Smith Urología General"><i class="far fa-star"></i></button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sem8"><span class="badge bg-primary me-3">8°</span> OCTAVO SEMESTRE</button></h2>
+                <div id="sem8" class="accordion-collapse collapse" data-bs-parent="#accordionSemestres">
+                    <div class="accordion-body">
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat8-pueri">Puericultura <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat8-pueri" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1PKTMjUqmdapYN3U1EIk08myhwEbIdDv-/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Puericultura del Niño Sano (4a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1PKTMjUqmdapYN3U1EIk08myhwEbIdDv-/view?usp=sharing" data-title="Puericultura Niño Sano"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat8-peri">Perinatología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat8-peri" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1Yc3mbpXUTyMjIt6Fb90BreeborpfvrsL/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical"></i> INPER Normas y Procedimientos</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1Yc3mbpXUTyMjIt6Fb90BreeborpfvrsL/view?usp=sharing" data-title="INPER Normas"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1kjCgOWCutm7UC7wvWV4H2MtL7F5QPI8B/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Games Introducción a la Pediatría</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1kjCgOWCutm7UC7wvWV4H2MtL7F5QPI8B/view?usp=sharing" data-title="Games Pediatría"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat8-prev">Medicina Preventiva <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat8-prev" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1kjCgOWCutm7UC7wvWV4H2MtL7F5QPI8B/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Games Introducción a la Pediatría</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1kjCgOWCutm7UC7wvWV4H2MtL7F5QPI8B/view?usp=sharing" data-title="Games Pediatría"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1SupMh4NC6XhcFlWDRweSQZ82O2wSiWdN/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-syringe"></i> Lineamientos de Vacunación 2025</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1SupMh4NC6XhcFlWDRweSQZ82O2wSiWdN/view?usp=sharing" data-title="Lineamientos Vacunación 2025"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat8-pedi">Pediatría <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat8-pedi" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1kjCgOWCutm7UC7wvWV4H2MtL7F5QPI8B/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Games Introducción a la Pediatría</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1kjCgOWCutm7UC7wvWV4H2MtL7F5QPI8B/view?usp=sharing" data-title="Games Pediatría"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/10RNumHEdXqCUJe-UwwXdyK2GU8mLNHNR/view?usp=drive_link" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Pediatría Martínez (8a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/10RNumHEdXqCUJe-UwwXdyK2GU8mLNHNR/view?usp=drive_link" data-title="Pediatría Martínez"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat8-orto">Ortopedia Pediátrica <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat8-orto" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/10RNumHEdXqCUJe-UwwXdyK2GU8mLNHNR/view?usp=drive_link" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Pediatría Martínez (8a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/10RNumHEdXqCUJe-UwwXdyK2GU8mLNHNR/view?usp=drive_link" data-title="Pediatría Martínez"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1kjCgOWCutm7UC7wvWV4H2MtL7F5QPI8B/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Games Introducción a la Pediatría</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1kjCgOWCutm7UC7wvWV4H2MtL7F5QPI8B/view?usp=sharing" data-title="Games Pediatría"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1VKtY9Ahbgmdtt4R6ydFDzZRXGTvpOluO/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Holcomb y Ashcraft Cirugía Pediátrica (7a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1VKtY9Ahbgmdtt4R6ydFDzZRXGTvpOluO/view?usp=sharing" data-title="Holcomb Cirugía Pediátrica"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1gZuzPQCA0nCyyFsgYJHg-XBPOAy1EZw0/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Urgencias Pediátricas Hospital Infantil</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1gZuzPQCA0nCyyFsgYJHg-XBPOAy1EZw0/view?usp=sharing" data-title="Urgencias Hospital Infantil"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat8-onco">Oncología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat8-onco" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1bRZHC6mTxHnx2qesmx0UDiTNyHTS7uR3/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Manual Washington de Oncología (3a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1bRZHC6mTxHnx2qesmx0UDiTNyHTS7uR3/view?usp=sharing" data-title="Manual Washington Oncología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1pUfT4_KyA1JX90Z0zam8kXrLVvm4Zo-R/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Medicina General Diagnóstico en Oncología</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1pUfT4_KyA1JX90Z0zam8kXrLVvm4Zo-R/view?usp=sharing" data-title="Medicina General Oncología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1_zbjkpG0U9jLNtjfJULe06UA72T2lSVe/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Tratamiento del Cáncer</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1_zbjkpG0U9jLNtjfJULe06UA72T2lSVe/view?usp=sharing" data-title="Tratamiento del Cáncer"><i class="far fa-star"></i></button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sem9"><span class="badge bg-primary me-3">9°</span> NOVENO SEMESTRE</button></h2>
+                <div id="sem9" class="accordion-collapse collapse" data-bs-parent="#accordionSemestres">
+                    <div class="accordion-body">
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat9-cardio">Cardiología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat9-cardio" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1I6QflDqLsqggRDwsvswIOJgBpyHENFbS/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-heartbeat"></i> Braunwald Tratado de Cardiología (12a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1I6QflDqLsqggRDwsvswIOJgBpyHENFbS/view?usp=sharing" data-title="Braunwald Cardiología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1n3BBlHSB0Q0msUn420fcMdWb8cXHMs_Y/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-medical-alt"></i> Cardin Manual Didáctico de ECG</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1n3BBlHSB0Q0msUn420fcMdWb8cXHMs_Y/view?usp=sharing" data-title="Cardin Manual ECG"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat9-neumo">Neumología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat9-neumo" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1cKRP57icfvoAKSnooUwSuR1X7eg07Rlz/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-lungs"></i> GINA 2024 (Guía Asma)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1cKRP57icfvoAKSnooUwSuR1X7eg07Rlz/view?usp=sharing" data-title="GINA 2024"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/17ISCVkakgKvRwUOWJsqPCCVv6Ph9IDhr/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-lungs"></i> GOLD 2024 (Guía EPOC)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/17ISCVkakgKvRwUOWJsqPCCVv6Ph9IDhr/view?usp=sharing" data-title="GOLD 2024"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1lueCtimZ3tCxIFzwBGShBhv_8-cyomlP/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Harrison Neumología</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1lueCtimZ3tCxIFzwBGShBhv_8-cyomlP/view?usp=sharing" data-title="Harrison Neumología"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat9-nefro">Nefrología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat9-nefro" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1VI-chM6Wt9Z9Br6QrwwZjzdiI6esFDrT/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología de Guyton (14a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1VI-chM6Wt9Z9Br6QrwwZjzdiI6esFDrT/view?usp=sharing" data-title="Fisiología de Guyton"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat9-gastro">Gastroenterología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat9-gastro" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1VI-chM6Wt9Z9Br6QrwwZjzdiI6esFDrT/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología de Guyton (14a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1VI-chM6Wt9Z9Br6QrwwZjzdiI6esFDrT/view?usp=sharing" data-title="Fisiología de Guyton"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1a_3CD6qwwedINtIYHgd52YuVpN4ucoEx/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Gastroenterología Villalobos</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1a_3CD6qwwedINtIYHgd52YuVpN4ucoEx/view?usp=sharing" data-title="Gastroenterología Villalobos"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat9-hemato">Hematología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat9-hemato" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1VI-chM6Wt9Z9Br6QrwwZjzdiI6esFDrT/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Fisiología de Guyton (14a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1VI-chM6Wt9Z9Br6QrwwZjzdiI6esFDrT/view?usp=sharing" data-title="Fisiología de Guyton"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1SWiLEIKfhYUy6qaUsKH1eCAR6JYnFy_a/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Dacie y Lewis Hematología (12a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1SWiLEIKfhYUy6qaUsKH1eCAR6JYnFy_a/view?usp=sharing" data-title="Dacie y Lewis Hematología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1959EI46XhNWLcpU7ZwL4Y967WC9GNr3c/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Bethesda Manual de Hematología (4a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1959EI46XhNWLcpU7ZwL4Y967WC9GNr3c/view?usp=sharing" data-title="Bethesda Manual Hematología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1WCpjJxACijT3gPxcCzv0TW8YwHLq6zZe/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Williams Manual de Hematología (8a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1WCpjJxACijT3gPxcCzv0TW8YwHLq6zZe/view?usp=sharing" data-title="Williams Manual Hematología"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat9-reuma">Reumatología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat9-reuma" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1nf9OkoVHEcXDdwdR8LlZRV-4LjRDhGQA/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-bone"></i> Kelley & Firesteins Tratado de Reumatología</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1nf9OkoVHEcXDdwdR8LlZRV-4LjRDhGQA/view?usp=sharing" data-title="Kelley & Firesteins Reumatología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1iV62j8OrCbmBl6Nrts56eqtsOHyddiI1/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Manual Washington Reumatología (3a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1iV62j8OrCbmBl6Nrts56eqtsOHyddiI1/view?usp=sharing" data-title="Manual Washington Reumatología"><i class="far fa-star"></i></button></div>
+                        </div>
+                        <button class="subject-trigger" type="button" data-bs-toggle="collapse" data-bs-target="#mat9-endo">Endocrinología <i class="fas fa-chevron-down"></i></button>
+                        <div id="mat9-endo" class="collapse book-list-container">
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1BGSSY749jtvGNcKV5iqSyhR0trzsAn3Z/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Endocrinología Greenspan (10a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1BGSSY749jtvGNcKV5iqSyhR0trzsAn3Z/view?usp=sharing" data-title="Endocrinología Greenspan"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1qsfWDqV7faOqfT1ksdUTbUMoknVpSIP1/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Manual de Endocrinología y Metabolismo (5a Ed.)</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1qsfWDqV7faOqfT1ksdUTbUMoknVpSIP1/view?usp=sharing" data-title="Manual Endocrinología"><i class="far fa-star"></i></button></div>
+                            <div class="book-item"><a href="https://drive.google.com/file/d/1Uw1YrByYw1plwr48puIKoPWWgbZ8cJ1m/view?usp=sharing" target="_blank" class="book-link"><i class="fas fa-file-pdf"></i> Williams Tratado de Endocrinología</a><button class="btn-fav" data-url="https://drive.google.com/file/d/1Uw1YrByYw1plwr48puIKoPWWgbZ8cJ1m/view?usp=sharing" data-title="Williams Tratado de Endocrinología"><i class="far fa-star"></i></button></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sem10"><span class="badge bg-secondary me-3">10°</span> DÉCIMO SEMESTRE</button></h2>
+                <div id="sem10" class="accordion-collapse collapse" data-bs-parent="#accordionSemestres">
+                    <div class="accordion-body">
+                        <div class="coming-soon">
+                            <i class="fas fa-hard-hat fa-2x mb-2"></i>
+                            <h5 class="fw-bold">Próximamente</h5>
+                            <p class="mb-0 small">Estamos trabajando en la estandarización de la bibliografía de 10° semestre con los docentes. Espéralo pronto.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="py-4 text-center border-top bg-white mt-5">
+        <p class="text-muted mb-1 small fw-bold">Comité Estudiantil de la Lic. de Médico Cirujano de la Universidad Intercultural de Chiapas</p>
+        <p class="text-muted extra-small">Material de uso exclusivo para consulta académica.</p>
+        <p class="text-muted extra-small mt-2" style="font-size: 0.75rem; max-width: 800px; margin: 0 auto; line-height: 1.4;">
+            <strong>Aviso Legal:</strong> Esta plataforma es una iniciativa independiente desarrollada por estudiantes para estudiantes. No constituye un canal oficial de comunicación de la Universidad Intercultural de Chiapas.
+        </p>
+        <div class="mt-3"><a href="mailto:comiteestudiantilmedicina@unich.edu.mx" class="text-decoration-none small text-primary fw-bold">Contacto y Soporte</a></div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Configuración Firebase (Misma que plataforma.html)
+        const firebaseConfig = { apiKey: "AIzaSyBxl7NFNI8lxfmdC-YJYmZ21zQOxQ72-3U", authDomain: "centro-de-recursos-academicos.firebaseapp.com", projectId: "centro-de-recursos-academicos", storageBucket: "centro-de-recursos-academicos.firebasestorage.app", messagingSenderId: "799558207054", appId: "1:799558207054:web:c7bb8f1400a4f2181ee51f", measurementId: "G-GWC94WNY9F" };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        let currentUser = null;
+
+        // AUTH LISTENER
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                // Cargar estrellas guardadas
+                await cargarEstrellasNube(user.uid);
+                // Ocultar overlay
+                document.getElementById('loadingOverlay').style.display = 'none';
+            } else {
+                // Si no hay sesión, regresar al login
+                alert("Sesión expirada. Por favor ingresa nuevamente.");
+                window.location.href = 'plataforma.html';
+            }
+        });
+
+        // CARGAR ESTRELLAS
+        async function cargarEstrellasNube(uid) {
+            const btns = document.querySelectorAll('.btn-fav');
+            try {
+                const q = query(collection(db, "favoritos"), where("uid", "==", uid));
+                const snapshot = await getDocs(q);
+                const favs = [];
+                snapshot.forEach(doc => favs.push(doc.data().url));
+
+                btns.forEach(btn => {
+                    const url = btn.getAttribute('data-url');
+                    const icon = btn.querySelector('i');
+                    if(favs.includes(url)) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas', 'text-warning');
+                    }
+                });
+            } catch (e) { console.error("Error sync:", e); }
+        }
+
+        // TOGGLE FAVORITO (NUBE)
+        window.toggleFavCloud = async (btn) => {
+            if (!currentUser) return;
+            const url = btn.getAttribute('data-url');
+            const title = btn.getAttribute('data-title');
+            const icon = btn.querySelector('i');
+            
+            // UI optimista (cambio visual inmediato)
+            const isFav = icon.classList.contains('fas');
+            
+            try {
+                if (isFav) {
+                    // ELIMINAR
+                    icon.classList.remove('fas', 'text-warning'); icon.classList.add('far');
+                    const q = query(collection(db, "favoritos"), where("uid", "==", currentUser.uid), where("url", "==", url));
+                    const snapshot = await getDocs(q);
+                    snapshot.forEach(async (d) => await deleteDoc(doc(db, "favoritos", d.id)));
+                } else {
+                    // AGREGAR
+                    icon.classList.remove('far'); icon.classList.add('fas', 'text-warning');
+                    await addDoc(collection(db, "favoritos"), {
+                        uid: currentUser.uid,
+                        url: url,
+                        title: title,
+                        timestamp: new Date()
+                    });
+                }
+            } catch (e) {
+                alert("Error de conexión. Intenta de nuevo.");
+                // Revertir UI si falla
+                if(isFav) { icon.classList.add('fas', 'text-warning'); icon.classList.remove('far'); }
+                else { icon.classList.add('far'); icon.classList.remove('fas', 'text-warning'); }
+            }
+        };
+
+        // Asignar evento click a los botones dinámicamente
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.btn-fav').forEach(btn => {
+                btn.addEventListener('click', () => window.toggleFavCloud(btn));
+            });
+        });
+    </script>
+
+    <script>
+        function filtrarLibros() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let semesters = document.querySelectorAll('.accordion-item');
+            semesters.forEach(sem => {
+                let books = sem.querySelectorAll('.book-item');
+                let foundInSemester = false;
+                if (input === "") {
+                    sem.querySelector('.accordion-collapse').classList.remove('show');
+                    sem.querySelectorAll('.book-list-container').forEach(bl => bl.classList.remove('show'));
+                    books.forEach(b => b.style.display = "flex");
+                    return;
+                }
+                books.forEach(book => {
+                    let text = book.textContent.toLowerCase();
+                    if (text.includes(input)) {
+                        book.style.display = "flex";
+                        foundInSemester = true;
+                        let materiaList = book.closest('.book-list-container');
+                        if(materiaList) materiaList.classList.add('show');
+                        let semCollapse = sem.querySelector('.accordion-collapse');
+                        if(semCollapse) semCollapse.classList.add('show');
+                    } else { book.style.display = "none"; }
+                });
+            });
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
