@@ -30,7 +30,6 @@
         .fav-book-item { background: white; border-radius: 8px; padding: 12px; border-left: 4px solid var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s; margin-bottom: 10px; }
         .fav-book-item:hover { transform: translateX(5px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         footer { background-color: var(--primary); color: white; padding: 3rem 0; font-size: 0.85rem; border-top: 5px solid var(--accent); }
-        .footer-link { color: rgba(255,255,255,0.7); text-decoration: none; border-bottom: 1px dashed rgba(255,255,255,0.4); }
         
         /* Chat IA Styles */
         .chat-msg-user { text-align: right; margin-bottom: 10px; }
@@ -108,6 +107,7 @@
             </ul>
 
             <div class="tab-content">
+                
                 <div class="tab-pane fade show active" id="tab-biblio">
                     <div class="row align-items-center mb-4">
                         <div class="col-md-8">
@@ -271,6 +271,23 @@
                                 <div class="quiz-option" onclick="alert('❌ Incorrecto. Sarampión = Koplik.')">C) Sarampión</div>
                             </div>
                         </div>
+                        
+                        <div class="col-md-12">
+                            <div class="card p-3 shadow-sm border-0 tool-card">
+                                <h6 class="fw-bold text-dark mb-3"><i class="fas fa-ruler-combined me-2"></i>Escalas de Guardia</h6>
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <button class="btn btn-outline-secondary w-100 text-start" onclick="alert('GLASGOW:\n\nOcular (4):\n4. Espontánea\n3. Orden\n2. Dolor\n1. No responde\n\nVerbal (5):\n5. Orientado\n4. Confuso\n3. Inapropiado\n2. Balbuceo\n1. Nada\n\nMotor (6):\n6. Obedece\n5. Localiza\n4. Retira\n3. Decorticación\n2. Descerebración\n1. Nada')"><i class="fas fa-brain me-2"></i>Glasgow</button>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-outline-secondary w-100 text-start" onclick="alert('APGAR (0-2 pts c/u):\n\nA: Apariencia (Color)\nP: Pulso (>100)\nG: Gesto (Estímulo)\nA: Actividad (Tono)\nR: Respiración (Llanto)')"><i class="fas fa-baby me-2"></i>APGAR</button>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-outline-secondary w-100 text-start" onclick="alert('ALVARADO (Apendicitis):\n\nSíntomas:\n- Migración dolor (1)\n- Anorexia (1)\n- Náusea/Vómito (1)\n\nSignos:\n- Dolor CID (2)\n- Rebote + (1)\n- Fiebre (1)\n\nLab:\n- Leucocitosis (2)\n- Desviación Izq (1)')"><i class="fas fa-user-md me-2"></i>Alvarado</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                 </div>
@@ -381,13 +398,13 @@
             }
         });
 
-        // AUTH
+        // FUNCIONES GLOBALES FIREBASE (Window)
         window.login = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch (e) { document.getElementById('loginError').textContent="Error: Credenciales incorrectas."; document.getElementById('loginError').classList.remove('d-none'); } };
         window.registrar = async () => { try { const cred = await createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, document.getElementById('regPass').value); await setDoc(doc(db, "estudiantes", cred.user.uid), { nombre: document.getElementById('regName').value, semestre: document.getElementById('regSemestre').value, email: document.getElementById('regEmail').value }); } catch (e) { alert("Error: " + e.message); } };
         window.logout = () => signOut(auth);
         window.toggleRegister = () => { const l=document.getElementById('formLogin'), r=document.getElementById('formRegister'); l.style.display=l.style.display==='none'?'block':'none'; r.style.display=r.style.display==='none'?'block':'none'; };
 
-        // PERFIL (Detección Género)
+        // PERFIL + GÉNERO
         async function cargarPerfil(uid) {
             const snap = await getDoc(doc(db, "estudiantes", uid));
             if (snap.exists()) {
@@ -433,45 +450,62 @@
             } catch (e) { container.innerHTML = '<div class="text-danger text-center">Error al cargar.</div>'; }
         }
         window.eliminarFavoritoNube = async (docId) => { if(confirm("¿Quitar de favoritos?")) { try { await deleteDoc(doc(db, "favoritos", docId)); if(auth.currentUser) cargarFavoritosNube(auth.currentUser.uid); } catch(e) { alert("Error."); } } }
-        window.eliminarFavoritoNube = window.eliminarFavoritoNube; 
     </script>
 
     <script>
-        // CALCULADORA DE DOSIS MASIVA
-        function calcularTodo() {
-            const peso = parseFloat(document.getElementById('pesoCalc').value);
-            if (!peso || peso <= 0) { alert("Por favor ingresa un peso válido en kg."); return; }
+        // --- CALCULADORA (MODO ROBUSTO) ---
+        window.calcularTodo = function() {
+            try {
+                const inputPeso = document.getElementById('pesoCalc');
+                if (!inputPeso) return;
+                const peso = parseFloat(inputPeso.value);
+                
+                if (!peso || peso <= 0) { alert("Por favor ingresa un peso válido."); return; }
 
-            // PEDIATRÍA
-            document.getElementById('pedPara').textContent = (peso * 15).toFixed(0) + " mg";
-            document.getElementById('pedIbu').textContent = (peso * 10).toFixed(0) + " mg";
-            document.getElementById('pedAmox').textContent = ((peso * 50)/3).toFixed(0) + " mg";
-            document.getElementById('pedSalb').textContent = (peso * 0.1).toFixed(2) + " mg";
-            let adre = peso * 0.01; if(adre > 0.3) adre = 0.3; document.getElementById('pedAdre').textContent = adre.toFixed(2) + " mg";
-            document.getElementById('pedCeft').textContent = ((peso * 50)/2).toFixed(0) + " mg";
-            document.getElementById('pedDiaz').textContent = (peso * 0.3).toFixed(1) + " mg";
-            document.getElementById('pedMida').textContent = (peso * 0.15).toFixed(1) + " mg";
-            let dexa = peso * 0.6; if(dexa > 16) dexa = 16; document.getElementById('pedDexa').textContent = dexa.toFixed(1) + " mg";
-            let onda = peso * 0.15; if(onda > 8) onda = 8; document.getElementById('pedOnda').textContent = onda.toFixed(1) + " mg";
-            document.getElementById('pedLora').textContent = (peso < 30) ? "5 mg" : "10 mg";
-            document.getElementById('pedCeti').textContent = (peso * 0.25).toFixed(1) + " mg";
+                // PEDIATRÍA
+                document.getElementById('pedPara').textContent = (peso * 15).toFixed(0) + " mg";
+                document.getElementById('pedIbu').textContent = (peso * 10).toFixed(0) + " mg";
+                document.getElementById('pedAmox').textContent = ((peso * 50)/3).toFixed(0) + " mg";
+                document.getElementById('pedSalb').textContent = (peso * 0.1).toFixed(2) + " mg";
+                
+                let adre = peso * 0.01; if(adre > 0.3) adre = 0.3; 
+                document.getElementById('pedAdre').textContent = adre.toFixed(2) + " mg";
+                
+                document.getElementById('pedCeft').textContent = ((peso * 50)/2).toFixed(0) + " mg";
+                document.getElementById('pedDiaz').textContent = (peso * 0.3).toFixed(1) + " mg";
+                document.getElementById('pedMida').textContent = (peso * 0.15).toFixed(1) + " mg";
+                
+                let dexa = peso * 0.6; if(dexa > 16) dexa = 16; 
+                document.getElementById('pedDexa').textContent = dexa.toFixed(1) + " mg";
+                
+                let onda = peso * 0.15; if(onda > 8) onda = 8; 
+                document.getElementById('pedOnda').textContent = onda.toFixed(1) + " mg";
+                
+                document.getElementById('pedLora').textContent = (peso < 30) ? "5 mg" : "10 mg";
+                document.getElementById('pedCeti').textContent = (peso * 0.25).toFixed(1) + " mg";
 
-            // ADULTOS
-            document.getElementById('aduLiq').textContent = (peso * 35).toFixed(0) + " ml/día";
-            document.getElementById('aduIns').textContent = (peso * 0.5).toFixed(0) + " UI";
+                // ADULTOS
+                document.getElementById('aduLiq').textContent = (peso * 35).toFixed(0) + " ml/día";
+                document.getElementById('aduIns').textContent = (peso * 0.5).toFixed(0) + " UI";
 
-            document.getElementById('resultadosDosis').style.display = 'block';
-        }
+                // MOSTRAR
+                const res = document.getElementById('resultadosDosis');
+                res.style.display = 'block';
+                res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-        function traducir() {
+            } catch (e) { alert("Error: " + e.message); }
+        };
+
+        // UI & IA
+        window.traducir = function() {
             const op = document.getElementById('fraseSelect').value;
             const txt = op=='1'?"Lek oyoxuk":op=='2'?"¿Bu x-a'i k'ux?":"...";
             document.getElementById('traduccionBox').textContent = txt;
-        }
+        };
 
         const GROQ_API_KEY = "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"; 
-        function abrirIA() { new bootstrap.Modal(document.getElementById('iaModal')).show(); }
-        async function consultarIA() {
+        window.abrirIA = function() { new bootstrap.Modal(document.getElementById('iaModal')).show(); };
+        window.consultarIA = async function() {
             const i = document.getElementById('iaQuery'), c = document.getElementById('chatHistory'), p = i.value.trim();
             if(!p) return;
             c.innerHTML += `<div class="chat-msg-user"><span>${p}</span></div>`; i.value = ''; c.scrollTop = c.scrollHeight;
@@ -482,10 +516,13 @@
                     body: JSON.stringify({ model: "llama-3.3-70b-versatile", messages: [{role:"system",content:"Eres Dr. Evidence."}, {role:"user",content:p}] })
                 });
                 const d = await r.json(); document.getElementById(lid).remove();
-                if(d.choices) c.innerHTML += `<div class="chat-msg-ai"><div>${d.choices[0].message.content.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}</div></div>`;
+                if(d.choices) {
+                    const t = d.choices[0].message.content.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+                    c.innerHTML += `<div class="chat-msg-ai"><div>${t}</div></div>`;
+                }
             } catch(e) { document.getElementById(lid).innerHTML = "Error."; }
             c.scrollTop = c.scrollHeight;
-        }
+        };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
