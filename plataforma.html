@@ -144,38 +144,7 @@
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="tab-clinica">
-                    <div class="row g-4">
-                        <div class="col-12">
-                            <div class="card quiz-card shadow border-0 p-3">
-                                <h6 class="fw-bold"><i class="fas fa-fire me-2"></i>Reto Clínico</h6>
-                                <p class="small mb-2">Recién nacido con cianosis que empeora al comer y mejora al llorar:</p>
-                                <div class="quiz-option" onclick="alert('❌ Incorrecto')">A) Transposición de Grandes Vasos</div>
-                                <div class="quiz-option" onclick="alert('✅ ¡Correcto! Atresia de Coanas.')">B) Atresia de Coanas</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card p-3 h-100 shadow-sm border-0 tool-card">
-                                <h6 class="fw-bold text-primary"><i class="fas fa-calculator me-2"></i>Dosis Pediátricas</h6>
-                                <input type="number" id="pesoCalc" class="form-control mb-2" placeholder="Peso (kg)">
-                                <button class="btn btn-primary btn-sm w-100 mb-2" onclick="calcularDosis()">Calcular</button>
-                                <div id="resDosis" class="alert alert-info small" style="display:none;">
-                                    <strong>Paracetamol:</strong> <span id="dosisPara">...</span> mg<br>
-                                    <strong>Ibuprofeno:</strong> <span id="dosisIbu">...</span> mg
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card p-3 h-100 shadow-sm border-0 tool-card">
-                                <h6 class="fw-bold text-success"><i class="fas fa-ruler-combined me-2"></i>Escalas</h6>
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-outline-secondary btn-sm text-start" onclick="alert('Glasgow: Ocular(4)+Verbal(5)+Motora(6)')">Glasgow</button>
-                                    <button class="btn btn-outline-secondary btn-sm text-start" onclick="alert('APGAR: Apariencia, Pulso, Gesto, Actividad, Respiración')">APGAR</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               
 
                 <div class="tab-pane fade" id="tab-inter">
                     <div class="row g-3">
@@ -202,6 +171,136 @@
                     </div>
                 </div>
 
+                <div class="tab-pane fade" id="tab-clinica">
+                    <div class="row g-4">
+                        
+                        <div class="col-md-12">
+                            <div class="card p-3 shadow-sm border-0 tool-card">
+                                <h5 class="fw-bold text-primary mb-3"><i class="fas fa-calculator me-2"></i>Calculadora Médica 2.0</h5>
+                                
+                                <div class="row align-items-end mb-4">
+                                    <div class="col-md-6">
+                                        <label class="fw-bold small text-muted">Peso del Paciente (kg)</label>
+                                        <input type="number" id="pesoCalc" class="form-control form-control-lg border-primary" placeholder="Ej: 20">
+                                    </div>
+                                    <div class="col-md-6 mt-2 mt-md-0">
+                                        <button class="btn btn-primary w-100 btn-lg fw-bold" onclick="calcularTodo()"><i class="fas fa-bolt me-2"></i>CALCULAR DOSIS</button>
+                                    </div>
+                                </div>
+
+                                <div id="resultadosDosis" style="display:none;">
+                                    <div class="row g-0">
+                                        
+                                        <div class="col-md-6 pe-md-3 mb-4 mb-md-0">
+                                            <h6 class="text-white bg-success p-2 rounded fw-bold text-center mb-3"><i class="fas fa-child me-2"></i>PEDIATRÍA</h6>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm table-borderless table-striped small">
+                                                    <tbody>
+                                                        <tr><td><strong>Paracetamol</strong></td><td class="text-end"><span class="badge bg-success" id="pedPara">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(10-15 mg/kg/dosis • c/6h)</td></tr>
+                                                        
+                                                        <tr><td><strong>Ibuprofeno</strong></td><td class="text-end"><span class="badge bg-success" id="pedIbu">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(10 mg/kg/dosis • c/8h)</td></tr>
+
+                                                        <tr><td><strong>Amoxicilina</strong></td><td class="text-end"><span class="badge bg-primary" id="pedAmox">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(50 mg/kg/día ÷ 3 dosis)</td></tr>
+
+                                                        <tr><td><strong>Salbutamol (Jbe)</strong></td><td class="text-end"><span class="badge bg-warning text-dark" id="pedSalb">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.1 mg/kg/dosis • c/8h)</td></tr>
+
+                                                        <tr><td><strong>Adrenalina (IM)</strong></td><td class="text-end"><span class="badge bg-danger" id="pedAdre">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.01 mg/kg/dosis • Max 0.3mg)</td></tr>
+
+                                                        <tr><td><strong>Ceftriaxona</strong></td><td class="text-end"><span class="badge bg-primary" id="pedCeft">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(50 mg/kg/día ÷ 2 dosis)</td></tr>
+
+                                                        <tr><td><strong>Diazepam (Rectal/IV)</strong></td><td class="text-end"><span class="badge bg-danger" id="pedDiaz">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.3 mg/kg/dosis • Crisis)</td></tr>
+
+                                                        <tr><td><strong>Midazolam</strong></td><td class="text-end"><span class="badge bg-danger" id="pedMida">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.15 mg/kg/dosis • Sedación)</td></tr>
+
+                                                        <tr><td><strong>Dexametasona</strong></td><td class="text-end"><span class="badge bg-info text-dark" id="pedDexa">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.6 mg/kg/dosis • Max 16mg)</td></tr>
+
+                                                        <tr><td><strong>Ondansetrón</strong></td><td class="text-end"><span class="badge bg-info text-dark" id="pedOnda">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.15 mg/kg/dosis • c/8h)</td></tr>
+
+                                                        <tr><td><strong>Loratadina</strong></td><td class="text-end"><span class="badge bg-secondary" id="pedLora">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(<30kg: 5mg • >30kg: 10mg / 24h)</td></tr>
+
+                                                        <tr><td><strong>Cetirizina</strong></td><td class="text-end"><span class="badge bg-secondary" id="pedCeti">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.25 mg/kg/día • c/12h-24h)</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 ps-md-3 border-start">
+                                            <h6 class="text-white bg-primary p-2 rounded fw-bold text-center mb-3"><i class="fas fa-user me-2"></i>ADULTOS / GENERAL</h6>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm table-borderless table-striped small">
+                                                    <tbody>
+                                                        <tr><td class="text-primary fw-bold">Líquidos Basales</td><td class="text-end"><span class="badge bg-primary" id="aduLiq">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(35 ml/kg/día)</td></tr>
+
+                                                        <tr><td class="text-primary fw-bold">Insulina (TDD)</td><td class="text-end"><span class="badge bg-warning text-dark" id="aduIns">...</span></td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.5 UI/kg/día • Dosis Total)</td></tr>
+
+                                                        <tr><td>Metformina</td><td class="text-end fw-bold">850 mg</td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/12-24h • Dosis Inicial)</td></tr>
+
+                                                        <tr><td>Losartán</td><td class="text-end fw-bold">50 mg</td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/12-24h • Antihipertensivo)</td></tr>
+
+                                                        <tr><td>Enalapril</td><td class="text-end fw-bold">10 mg</td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/12h • Antihipertensivo)</td></tr>
+
+                                                        <tr><td>Omeprazol</td><td class="text-end fw-bold">20 - 40 mg</td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/24h • Ayuno)</td></tr>
+
+                                                        <tr><td>Atorvastatina</td><td class="text-end fw-bold">20 - 40 mg</td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/24h • Noche)</td></tr>
+
+                                                        <tr><td>Aspirina (AAS)</td><td class="text-end fw-bold">100 - 300 mg</td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(Protección vs IAM)</td></tr>
+
+                                                        <tr><td>Paracetamol</td><td class="text-end fw-bold">1 g</td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/8h • Max 4g/día)</td></tr>
+
+                                                        <tr><td>Ceftriaxona</td><td class="text-end fw-bold">1 - 2 g</td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/12-24h • IV)</td></tr>
+
+                                                        <tr><td>Ketorolaco</td><td class="text-end fw-bold">30 mg</td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/8h • IV/IM • Max 5 días)</td></tr>
+
+                                                        <tr><td>Diclofenaco</td><td class="text-end fw-bold">75 mg</td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/12h • IM)</td></tr>
+
+                                                        <tr><td>Salbutamol</td><td class="text-end fw-bold">2 Disparos</td></tr>
+                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(100mcg/dosis • Rescate)</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card quiz-card shadow border-0 p-3">
+                                <h6 class="fw-bold"><i class="fas fa-fire me-2"></i>Reto Clínico del Día</h6>
+                                <p class="small mb-2">Paciente 4 años, fiebre 5 días, lengua en fresa y adenopatía cervical. Dx:</p>
+                                <div class="quiz-option" onclick="alert('❌ Incorrecto. Escarlatina suele tener faringitis.')">A) Escarlatina</div>
+                                <div class="quiz-option" onclick="alert('✅ ¡Correcto! Kawasaki. Riesgo aneurismas.')">B) Enf. de Kawasaki</div>
+                                <div class="quiz-option" onclick="alert('❌ Incorrecto. Sarampión = Koplik.')">C) Sarampión</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
                 <div class="tab-pane fade" id="tab-buzon">
                     <div class="row justify-content-center">
                         <div class="col-md-8">
