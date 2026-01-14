@@ -144,33 +144,6 @@
                     </div>
                 </div>
 
-               
-
-                <div class="tab-pane fade" id="tab-inter">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="card p-3 shadow-sm border-0 h-100 tool-card">
-                                <h6 class="fw-bold text-primary">Auxiliar Tsotsil</h6>
-                                <select id="fraseSelect" class="form-select mb-3" onchange="traducir()">
-                                    <option value="" selected>Frase...</option>
-                                    <option value="1">Buenos días</option><option value="2">¿Dónde duele?</option>
-                                </select>
-                                <div class="alert alert-warning text-center fw-bold text-dark" id="traduccionBox">...</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card p-3 shadow-sm border-0 h-100 tool-card">
-                                <h6 class="fw-bold text-success">Fitoterapia</h6>
-                                <ul class="list-group list-group-flush small">
-                                    <li class="list-group-item"><strong>Manzanilla:</strong> Dolor estomacal.</li>
-                                    <li class="list-group-item"><strong>Jengibre:</strong> Náuseas.</li>
-                                    <li class="list-group-item"><strong>Guayaba:</strong> Diarrea.</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="tab-pane fade" id="tab-clinica">
                     <div class="row g-4">
                         
@@ -301,6 +274,32 @@
 
                     </div>
                 </div>
+
+                <div class="tab-pane fade" id="tab-inter">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card p-3 shadow-sm border-0 h-100 tool-card">
+                                <h6 class="fw-bold text-primary">Auxiliar Tsotsil</h6>
+                                <select id="fraseSelect" class="form-select mb-3" onchange="traducir()">
+                                    <option value="" selected>Frase...</option>
+                                    <option value="1">Buenos días</option><option value="2">¿Dónde duele?</option>
+                                </select>
+                                <div class="alert alert-warning text-center fw-bold text-dark" id="traduccionBox">...</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card p-3 shadow-sm border-0 h-100 tool-card">
+                                <h6 class="fw-bold text-success">Fitoterapia</h6>
+                                <ul class="list-group list-group-flush small">
+                                    <li class="list-group-item"><strong>Manzanilla:</strong> Dolor estomacal.</li>
+                                    <li class="list-group-item"><strong>Jengibre:</strong> Náuseas.</li>
+                                    <li class="list-group-item"><strong>Guayaba:</strong> Diarrea.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="tab-pane fade" id="tab-buzon">
                     <div class="row justify-content-center">
                         <div class="col-md-8">
@@ -388,22 +387,15 @@
         window.logout = () => signOut(auth);
         window.toggleRegister = () => { const l=document.getElementById('formLogin'), r=document.getElementById('formRegister'); l.style.display=l.style.display==='none'?'block':'none'; r.style.display=r.style.display==='none'?'block':'none'; };
 
-        // PERFIL CON DETECCIÓN DE GÉNERO
+        // PERFIL (Detección Género)
         async function cargarPerfil(uid) {
             const snap = await getDoc(doc(db, "estudiantes", uid));
             if (snap.exists()) {
                 currentUserData = snap.data();
-                
-                // --- DETECCIÓN INTELIGENTE DE GÉNERO ---
                 const nombrePila = currentUserData.nombre.split(' ')[0].toLowerCase();
                 const excepcionesFemeninas = ['beatriz', 'noemi', 'jazmin', 'abril', 'raquel', 'guadalupe', 'lizbeth', 'monserrat', 'carmen', 'dolores', 'luz', 'pilar', 'rosario', 'consuelo', 'mercedes', 'belen', 'esther', 'judith', 'ruth', 'xochitl', 'citlalli', 'yazmin', 'karen', 'sharon', 'jocelyn', 'allison'];
-                
                 let prefijo = "Dr.";
-                if (nombrePila.endsWith('a') || excepcionesFemeninas.includes(nombrePila)) {
-                    prefijo = "Dra.";
-                }
-                // ----------------------------------------
-
+                if (nombrePila.endsWith('a') || excepcionesFemeninas.includes(nombrePila)) { prefijo = "Dra."; }
                 document.getElementById('userNameDisplay').textContent = prefijo + " " + currentUserData.nombre;
                 document.getElementById('userSemestreDisplay').textContent = currentUserData.semestre + (isNaN(currentUserData.semestre)?'':'° Semestre');
             }
@@ -427,113 +419,56 @@
             } catch(e) { alert("Error: " + e.message); }
         };
 
-        // --- LÓGICA DE FAVORITOS (NUBE) ---
+        // FAVORITOS
         window.cargarFavoritosNube = async (uid) => {
             const container = document.getElementById('favoritos-container');
             container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
-            
             try {
                 const q = query(collection(db, "favoritos"), where("uid", "==", uid));
                 const querySnapshot = await getDocs(q);
-                
-                if (querySnapshot.empty) {
-                    container.innerHTML = '<div class="col-12 text-center text-muted small py-3"><i class="fas fa-star text-secondary opacity-25 fa-2x mb-2"></i><br>No tienes favoritos guardados en la nube. Ve a la Biblioteca para agregar.</div>';
-                    return;
-                }
-
+                if (querySnapshot.empty) { container.innerHTML = '<div class="col-12 text-center text-muted small py-3"><i class="fas fa-star text-secondary opacity-25 fa-2x mb-2"></i><br>No tienes favoritos guardados en la nube.</div>'; return; }
                 let html = '';
-                querySnapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    html += `
-                    <div class="col-md-6 animate__animated animate__fadeIn">
-                        <div class="fav-book-item d-flex justify-content-between align-items-center">
-                            <div class="text-truncate">
-                                <i class="fas fa-book text-primary me-2"></i>
-                                <a href="${data.url}" target="_blank" class="text-decoration-none text-dark fw-bold small">${data.title}</a>
-                            </div>
-                            <button onclick="eliminarFavoritoNube('${docSnap.id}')" class="btn btn-sm text-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                    </div>`;
-                });
+                querySnapshot.forEach((docSnap) => { const data = docSnap.data(); html += `<div class="col-md-6 animate__animated animate__fadeIn"><div class="fav-book-item d-flex justify-content-between align-items-center"><div class="text-truncate"><i class="fas fa-book text-primary me-2"></i><a href="${data.url}" target="_blank" class="text-decoration-none text-dark fw-bold small">${data.title}</a></div><button onclick="eliminarFavoritoNube('${docSnap.id}')" class="btn btn-sm text-danger" title="Eliminar"><i class="fas fa-trash-alt"></i></button></div></div>`; });
                 container.innerHTML = html;
-
-            } catch (e) {
-                console.error(e);
-                container.innerHTML = '<div class="text-danger text-center">Error al cargar favoritos.</div>';
-            }
+            } catch (e) { container.innerHTML = '<div class="text-danger text-center">Error al cargar.</div>'; }
         }
-
-        window.eliminarFavoritoNube = async (docId) => {
-            if(confirm("¿Quitar de favoritos?")) {
-                try {
-                    await deleteDoc(doc(db, "favoritos", docId));
-                    if(auth.currentUser) cargarFavoritosNube(auth.currentUser.uid);
-                } catch(e) { alert("Error al eliminar"); }
-            }
-        }
+        window.eliminarFavoritoNube = async (docId) => { if(confirm("¿Quitar de favoritos?")) { try { await deleteDoc(doc(db, "favoritos", docId)); if(auth.currentUser) cargarFavoritosNube(auth.currentUser.uid); } catch(e) { alert("Error."); } } }
         window.eliminarFavoritoNube = window.eliminarFavoritoNube; 
     </script>
 
     <script>
-      // HERRAMIENTAS CLÍNICAS COMPLETA
+        // CALCULADORA DE DOSIS MASIVA
         function calcularTodo() {
             const peso = parseFloat(document.getElementById('pesoCalc').value);
-            
-            if (!peso || peso <= 0) { 
-                alert("Por favor ingresa un peso válido en kg."); 
-                return; 
-            }
+            if (!peso || peso <= 0) { alert("Por favor ingresa un peso válido en kg."); return; }
 
-            // --- PEDIATRÍA (Cálculos Precisos) ---
-            
-            // Paracetamol (15mg)
+            // PEDIATRÍA
             document.getElementById('pedPara').textContent = (peso * 15).toFixed(0) + " mg";
-            // Ibuprofeno (10mg)
             document.getElementById('pedIbu').textContent = (peso * 10).toFixed(0) + " mg";
-            // Amoxicilina (50mg/dia / 3)
             document.getElementById('pedAmox').textContent = ((peso * 50)/3).toFixed(0) + " mg";
-            // Salbutamol Jbe (0.1mg)
             document.getElementById('pedSalb').textContent = (peso * 0.1).toFixed(2) + " mg";
-            // Adrenalina (0.01mg - Max 0.3)
-            let adre = peso * 0.01;
-            if(adre > 0.3) adre = 0.3; // Tope seguridad pediátrica básica
-            document.getElementById('pedAdre').textContent = adre.toFixed(2) + " mg";
-            // Ceftriaxona (50mg/dia / 2)
+            let adre = peso * 0.01; if(adre > 0.3) adre = 0.3; document.getElementById('pedAdre').textContent = adre.toFixed(2) + " mg";
             document.getElementById('pedCeft').textContent = ((peso * 50)/2).toFixed(0) + " mg";
-            // Diazepam (0.3mg)
             document.getElementById('pedDiaz').textContent = (peso * 0.3).toFixed(1) + " mg";
-            // Midazolam (0.15mg)
             document.getElementById('pedMida').textContent = (peso * 0.15).toFixed(1) + " mg";
-            // Dexametasona (0.6mg - Max 16)
-            let dexa = peso * 0.6;
-            if(dexa > 16) dexa = 16;
-            document.getElementById('pedDexa').textContent = dexa.toFixed(1) + " mg";
-            // Ondansetron (0.15mg - Max 8)
-            let onda = peso * 0.15;
-            if(onda > 8) onda = 8;
-            document.getElementById('pedOnda').textContent = onda.toFixed(1) + " mg";
-            // Loratadina (Peso)
+            let dexa = peso * 0.6; if(dexa > 16) dexa = 16; document.getElementById('pedDexa').textContent = dexa.toFixed(1) + " mg";
+            let onda = peso * 0.15; if(onda > 8) onda = 8; document.getElementById('pedOnda').textContent = onda.toFixed(1) + " mg";
             document.getElementById('pedLora').textContent = (peso < 30) ? "5 mg" : "10 mg";
-            // Cetirizina (0.25mg)
             document.getElementById('pedCeti').textContent = (peso * 0.25).toFixed(1) + " mg";
 
-
-            // --- ADULTOS (Cálculos Dinámicos) ---
-            
-            // Líquidos (35ml)
+            // ADULTOS
             document.getElementById('aduLiq').textContent = (peso * 35).toFixed(0) + " ml/día";
-            // Insulina TDD (0.5 UI)
             document.getElementById('aduIns').textContent = (peso * 0.5).toFixed(0) + " UI";
 
-            // Mostrar resultados
             document.getElementById('resultadosDosis').style.display = 'block';
         }
-        }
+
         function traducir() {
             const op = document.getElementById('fraseSelect').value;
             const txt = op=='1'?"Lek oyoxuk":op=='2'?"¿Bu x-a'i k'ux?":"...";
             document.getElementById('traduccionBox').textContent = txt;
         }
+
         const GROQ_API_KEY = "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"; 
         function abrirIA() { new bootstrap.Modal(document.getElementById('iaModal')).show(); }
         async function consultarIA() {
