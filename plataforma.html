@@ -279,14 +279,27 @@
         window.logout = () => signOut(auth);
         window.toggleRegister = () => { const l=document.getElementById('formLogin'), r=document.getElementById('formRegister'); l.style.display=l.style.display==='none'?'block':'none'; r.style.display=r.style.display==='none'?'block':'none'; };
 
-        async function cargarPerfil(uid) {
-            const snap = await getDoc(doc(db, "estudiantes", uid));
-            if (snap.exists()) {
-                currentUserData = snap.data();
-                document.getElementById('userNameDisplay').textContent = "Dr(a). " + currentUserData.nombre;
-                document.getElementById('userSemestreDisplay').textContent = currentUserData.semestre + (isNaN(currentUserData.semestre)?'':'° Semestre');
-            }
+       async function cargarPerfil(uid) {
+    const snap = await getDoc(doc(db, "estudiantes", uid));
+    if (snap.exists()) {
+        currentUserData = snap.data();
+        
+        // --- DETECCIÓN INTELIGENTE DE GÉNERO ---
+        const nombrePila = currentUserData.nombre.split(' ')[0].toLowerCase(); // Toma el primer nombre
+        const excepcionesFemeninas = ['beatriz', 'noemi', 'jazmin', 'abril', 'raquel', 'guadalupe', 'lizbeth', 'monserrat', 'carmen', 'dolores', 'luz', 'pilar', 'rosario', 'consuelo', 'mercedes', 'belen', 'esther', 'judith', 'ruth', 'xochitl', 'citlalli', 'yazmin', 'karen', 'sharon', 'jocelyn', 'allison'];
+        
+        let prefijo = "Dr."; // Por defecto masculino
+        
+        // Si termina en 'a' O está en la lista de excepciones, es Dra.
+        if (nombrePila.endsWith('a') || excepcionesFemeninas.includes(nombrePila)) {
+            prefijo = "Dra.";
         }
+        // ----------------------------------------
+
+        document.getElementById('userNameDisplay').textContent = prefijo + " " + currentUserData.nombre;
+        document.getElementById('userSemestreDisplay').textContent = currentUserData.semestre + (isNaN(currentUserData.semestre)?'':'° Semestre');
+    }
+}
 
         // BUZÓN
         window.enviarSugerencia = async () => {
