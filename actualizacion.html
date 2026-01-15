@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REMEI | Actualización Médica</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --primary: #003366; --accent: #D4AF37; --bg: #f9f9f9; --paper: #ffffff; }
+        body { background-color: var(--bg); font-family: 'Lato', sans-serif; color: #2c3e50; }
+        
+        /* Tipografía de Revista */
+        h1, h2, h3, h4, .brand-font { font-family: 'Playfair Display', serif; }
+        
+        /* Navbar Simple */
+        .navbar-remei { background-color: #1a1a1a; border-bottom: 3px solid var(--accent); }
+        
+        /* Cabecera de Revista (Masthead) */
+        .masthead { padding: 2rem 0; border-bottom: 1px solid #ddd; background: white; }
+        .masthead-title { font-size: 3.5rem; font-weight: 700; color: var(--primary); letter-spacing: -1px; margin: 0; }
+        .masthead-subtitle { font-family: 'Lato', sans-serif; text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; color: #666; margin-top: 5px; }
+        
+        /* Línea de info atemporal */
+        .vol-info { font-size: 0.85rem; color: #444; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 8px 0; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Tarjeta de Edición Actual (Compacta) */
+        .edition-card { background: white; border: 1px solid #ddd; border-left: 5px solid var(--primary); transition: 0.3s; }
+        .edition-card:hover { transform: translateX(5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        /* Tarjetas de Artículos (Voces Estudiantiles) */
+        .article-card { background: var(--paper); border: 1px solid #e0e0e0; transition: 0.3s; height: 100%; }
+        .article-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); border-color: var(--primary); }
+        .article-img-sm { height: 160px; background-size: cover; background-position: center; }
+        
+        /* Sidebar (Tablero) */
+        .sidebar-box { background: white; border: 1px solid #ddd; padding: 20px; border-top: 4px solid var(--accent); margin-bottom: 20px; }
+        .download-item { border-bottom: 1px dashed #eee; padding: 10px 0; display: flex; align-items: center; transition: 0.2s; }
+        .download-item:hover { background-color: #f8f9fa; padding-left: 5px; }
+        .download-item:last-child { border-bottom: none; }
+        
+        /* Footer */
+        footer { background-color: #1a1a1a; border-top: 5px solid var(--accent); color: white; padding: 3rem 0; margin-top: 0; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark navbar-remei sticky-top">
+        <div class="container">
+            <a class="navbar-brand small fw-bold" href="index.html">
+                <i class="fas fa-arrow-left me-2"></i>Regresar al Lobby
+            </a>
+            <span class="text-white-50 small">Comité Estudiantil de Médico Cirujano</span>
+        </div>
+    </nav>
+
+    <header class="masthead text-center">
+        <div class="container">
+            <h1 class="masthead-title">REMEI</h1>
+            <p class="masthead-subtitle">Revista Médico Estudiantil Intercultural</p>
+            
+            <div class="vol-info container d-flex justify-content-between fw-bold">
+                <span>Ciencia, Cultura y Salud Pública</span>
+                <span>San Cristóbal de Las Casas, Chiapas</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-5">
+        <div class="row g-5">
+            
+            <div class="col-lg-8">
+                
+                <div class="card edition-card p-4 mb-5 shadow-sm">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <span class="badge bg-primary mb-2">PUBLICACIÓN DESTACADA</span>
+                            <h2 class="brand-font fw-bold mb-2">REMEI: Volumen 1</h2>
+                            <p class="text-muted mb-3">
+                                En esta edición inaugural abordamos los retos epidemiológicos de los Altos de Chiapas, 
+                                con un enfoque especial en enfermedades respiratorias y el manejo intercultural de la diabetes.
+                                Incluye editoriales, casos clínicos y análisis de campo.
+                            </p>
+                            <button class="btn btn-dark rounded-0 px-4 fw-bold" onclick="alert('Abriendo PDF del Volumen 1...')">
+                                <i class="fas fa-book-open me-2"></i>Leer Edición Completa
+                            </button>
+                        </div>
+                        <div class="col-md-4 text-center d-none d-md-block">
+                            <i class="fas fa-file-medical-alt text-secondary opacity-25" style="font-size: 8rem;"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-5">
+                    <h4 class="mb-4 border-bottom pb-2 brand-font fw-bold">Voces Estudiantiles</h4>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card article-card h-100 border-0 shadow-sm">
+                                <div class="article-img-sm" style="background-image: url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=1000');"></div>
+                                <div class="card-body d-flex flex-column">
+                                    <span class="badge bg-secondary w-auto align-self-start mb-2">Opinión</span>
+                                    <h5 class="card-title fw-bold">El reto de la Diabetes Rural</h5>
+                                    <p class="card-text small text-muted flex-grow-1">¿Cómo adaptar la dieta recomendada por la ADA a la alimentación basada en maíz?</p>
+                                    <a href="#" class="text-primary fw-bold small text-decoration-none mt-3" onclick="alert('Leer nota...')">Leer artículo <i class="fas fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card article-card h-100 border-0 shadow-sm">
+                                <div class="article-img-sm" style="background-image: url('https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?q=80&w=1000');"></div>
+                                <div class="card-body d-flex flex-column">
+                                    <span class="badge bg-success w-auto align-self-start mb-2">Caso Clínico</span>
+                                    <h5 class="card-title fw-bold">Crisis Hipertensiva</h5>
+                                    <p class="card-text small text-muted flex-grow-1">Reporte de caso: Paciente femenino de 65 años con apego irregular al tratamiento.</p>
+                                    <a href="#" class="text-primary fw-bold small text-decoration-none mt-3" onclick="alert('Leer nota...')">Leer reporte <i class="fas fa-arrow-right"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-4">
+                
+                <div class="sidebar-box shadow-sm">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-clipboard-list me-2 text-primary"></i>Boletines y GPC</h5>
+                    <p class="small text-muted mb-3">Descargas directas de normatividad vigente y avisos.</p>
+                    
+                    <div class="d-flex flex-column">
+                        <a href="#" class="download-item text-decoration-none" onclick="alert('Descargando GPC...')">
+                            <i class="fas fa-file-pdf fa-2x text-danger me-3"></i>
+                            <div>
+                                <h6 class="mb-0 text-dark fw-bold">GPC Hipertensión 2025</h6>
+                                <small class="text-muted">Actualización CENETEC</small>
+                            </div>
+                            <i class="fas fa-download ms-auto text-secondary"></i>
+                        </a>
+                        
+                        <a href="#" class="download-item text-decoration-none" onclick="alert('Descargando Boletín...')">
+                            <i class="fas fa-chart-line fa-2x text-warning me-3"></i>
+                            <div>
+                                <h6 class="mb-0 text-dark fw-bold">Boletín Epidemiológico</h6>
+                                <small class="text-muted">Semana 3 - Chiapas</small>
+                            </div>
+                            <i class="fas fa-download ms-auto text-secondary"></i>
+                        </a>
+
+                        <a href="#" class="download-item text-decoration-none" onclick="alert('Abriendo Calendario...')">
+                            <i class="fas fa-calendar-alt fa-2x text-primary me-3"></i>
+                            <div>
+                                <h6 class="mb-0 text-dark fw-bold">Esquema Vacunación</h6>
+                                <small class="text-muted">Versión 2026</small>
+                            </div>
+                            <i class="fas fa-download ms-auto text-secondary"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="p-4 text-center text-white rounded shadow-sm" style="background: linear-gradient(135deg, var(--primary), #001f3f);">
+                    <i class="fas fa-pen-nib fa-3x mb-3 text-warning"></i>
+                    <h5 class="fw-bold">¿Tienes una investigación?</h5>
+                    <p class="small opacity-75">La REMEI busca artículos estudiantiles. ¡Tu trabajo merece ser leído!</p>
+                    <a href="mailto:comiteestudiantilmedicina@unich.edu.mx" class="btn btn-outline-light btn-sm fw-bold w-100">Enviar Manuscrito</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <section class="py-5 mt-5 text-center w-100" style="background-color: #e9ecef; position: relative; z-index: 10;">
+        <div class="container">
+            <h3 class="brand-font fw-bold">Únete a la Red de Conocimiento</h3>
+            <p class="text-muted">Recibe las actualizaciones de la REMEI directamente en tu correo institucional.</p>
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-6 col-lg-5">
+                    
+                    <form action="https://formspree.io/f/mwvvpbno" method="POST">
+                        <div class="input-group shadow-sm">
+                            <input type="email" name="email" class="form-control" placeholder="Tu correo UNICH..." required>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold">Suscribirse</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-2 fw-bold text-white">Comité Estudiantil de la Lic. de Médico Cirujano de la Universidad Intercultural de Chiapas</p>
+            <p class="text-white-50 small">Material de uso exclusivo para consulta académica.</p>
+            
+            <p class="text-warning fw-bold small mt-2 mb-3" style="font-size: 0.85rem; letter-spacing: 0.5px;">
+                Construcción, Desarrollo y Arquitectura: Luis Daniel Aguilar
+            </p>
+            
+            <p class="text-white-50 small mt-2" style="font-size: 0.75rem; max-width: 800px; margin: 0 auto; line-height: 1.4;">
+                <strong>Aviso Legal:</strong> Esta plataforma es una iniciativa independiente desarrollada por estudiantes para estudiantes. No constituye un canal oficial de comunicación de la Universidad Intercultural de Chiapas. Las siglas "UNICH" se utilizan aquí exclusivamente como referencia geográfica y demográfica para la comunidad estudiantil.
+            </p>
+
+            <div class="mt-3">
+                <a href="mailto:comiteestudiantilmedicina@unich.edu.mx" class="text-decoration-none small text-warning fw-bold">Contacto y Soporte</a>
+            </div>
+            
+            <div class="d-inline-block border-top border-white-50 pt-3 mt-3">
+                <a href="#" class="text-white-50 text-decoration-none small me-3" onclick="alert('Aviso de Privacidad en construcción.')">Aviso de Privacidad</a>
+                <a href="#" class="text-white-50 text-decoration-none small" onclick="alert('Tratamiento de datos en construcción.')">Tratamiento de Datos Personales</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
