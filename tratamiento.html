@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tratamiento de Datos | Comité Medicina</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Lato', sans-serif; color: #333; }
+        
+        /* Navbar AZUL INSTITUCIONAL */
+        .navbar-legal { background-color: #003366; border-bottom: 3px solid #D4AF37; }
+        
+        /* Contenedor del Documento */
+        .legal-paper { 
+            background: white; 
+            padding: 3rem; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            margin-top: 2rem; 
+            margin-bottom: 2rem;
+            border-top: 5px solid #003366;
+        }
+
+        h1 { color: #003366; font-weight: 700; font-size: 2rem; }
+        h4 { color: #003366; font-weight: 700; margin-top: 1.5rem; font-size: 1.2rem; }
+        p, li { text-align: justify; line-height: 1.6; font-size: 0.95rem; color: #555; }
+        
+        /* Footer AZUL INSTITUCIONAL */
+        footer { background-color: #003366; border-top: 5px solid #D4AF37; color: white; padding: 3rem 0; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-dark navbar-legal sticky-top">
+        <div class="container">
+            <a class="navbar-brand small fw-bold" href="index.html">
+                <i class="fas fa-arrow-left me-2"></i>Regresar al Lobby
+            </a>
+            <span class="text-white-50 small d-none d-md-block">Comité Estudiantil de Médico Cirujano UNICH</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="legal-paper">
+                    <div class="text-center mb-5">
+                        <i class="fas fa-database fa-3x text-secondary mb-3"></i>
+                        <h1>Política de Seguridad y Tratamiento de Datos</h1>
+                        <p class="text-muted small">Protocolo Técnico - Enero 2026</p>
+                    </div>
+
+                    <h4>1. Principio de Minimización</h4>
+                    <p>
+                        El Comité Estudiantil se rige por el principio de "Minimización de Datos". Esto significa que únicamente solicitamos la información estrictamente necesaria para la funcionalidad operativa de la plataforma (ej. correo electrónico para envío de la revista REMEI). No almacenamos datos sensibles como direcciones particulares, historiales clínicos personales o datos bancarios.
+                    </p>
+
+                    <h4>2. Almacenamiento y Ciclo de Vida</h4>
+                    <p>
+                        Al ser una plataforma independiente sin servidores físicos propios, el tratamiento de los datos sigue el siguiente ciclo:
+                    </p>
+                    <ul>
+                        <li><strong>Recolección:</strong> Los datos ingresados en formularios viajan encriptados mediante protocolo HTTPS (SSL).</li>
+                        <li><strong>Procesamiento:</strong> Utilizamos proveedores de infraestructura en la nube de confianza (Formspree, Google Workspace) para gestionar la recepción de información.</li>
+                        <li><strong>Retención:</strong> Los correos electrónicos de suscripción se mantienen activos mientras el usuario desee recibir actualizaciones. Se realiza una depuración semestral de correos inactivos (bounces).</li>
+                    </ul>
+
+                    <h4>3. Restricción de Acceso</h4>
+                    <p>
+                        El acceso a la base de datos de suscriptores y reportes académicos está restringido exclusivamente a la Presidencia del Comité y a la Secretaría Técnica. Ningún otro miembro del comité, alumno externo o personal administrativo tiene acceso a las credenciales de administración de la plataforma.
+                    </p>
+
+                    <h4>4. Uso de Cookies y Rastreo</h4>
+                    <p>
+                        Esta plataforma no utiliza cookies de rastreo publicitario ni vende metadatos de navegación a terceros. Las únicas cookies utilizadas son técnicas, necesarias para recordar preferencias de visualización temporal (como el cierre de modales o alertas) durante su sesión.
+                    </p>
+
+                    <h4>5. Protocolo de Eliminación (Derecho al Olvido)</h4>
+                    <p>
+                        Si usted desea que sus datos sean eliminados definitivamente de nuestros registros digitales, puede solicitarlo enviando un correo con el asunto "BAJA DEFINITIVA". El Comité se compromete a eliminar su registro en un plazo no mayor a 48 horas hábiles, enviando una confirmación de borrado.
+                    </p>
+
+                    <div class="text-center mt-5">
+                        <a href="index.html" class="btn btn-outline-primary px-4 rounded-pill">Entendido, volver al inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center mt-5">
+        <div class="container">
+            <p class="mb-2 fw-bold text-white">Comité Estudiantil de la Lic. de Médico Cirujano de la Universidad Intercultural de Chiapas</p>
+            <p class="text-white-50 extra-small">Material de uso exclusivo para consulta académica.</p>
+            
+            <p class="text-warning fw-bold small mt-2 mb-3" style="font-size: 0.85rem; letter-spacing: 0.5px;">
+                Construcción, Desarrollo y Arquitectura: Luis Daniel Aguilar
+            </p>
+            
+            <p class="text-white-50 extra-small mt-2" style="font-size: 0.75rem; max-width: 800px; margin: 0 auto; line-height: 1.4;">
+                <strong>Aviso Legal:</strong> Esta plataforma es una iniciativa independiente desarrollada por estudiantes para estudiantes. No constituye un canal oficial de comunicación de la Universidad Intercultural de Chiapas. Las siglas "UNICH" se utilizan aquí exclusivamente como referencia geográfica y demográfica para la comunidad estudiantil, sin relación con la administración central ni uso de la identidad corporativa institucional.
+            </p>
+
+            <div class="mt-3">
+                <a href="mailto:comiteestudiantilmedicina@unich.edu.mx" class="text-decoration-none small text-warning fw-bold">Contacto y Soporte</a>
+            </div>
+            
+            <div class="d-inline-block border-top border-white-50 pt-3 mt-3">
+                <a href="aviso.html" class="footer-link me-3 text-white-50 text-decoration-none small">Aviso de Privacidad</a>
+                <a href="tratamiento.html" class="footer-link text-white-50 text-decoration-none small">Tratamiento de Datos Personales</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
