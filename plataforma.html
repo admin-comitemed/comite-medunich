@@ -24,13 +24,30 @@
         .tool-card { transition: transform 0.2s; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .tool-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: var(--accent) !important; }
         .quiz-card { background: linear-gradient(45deg, var(--secondary), #a31e45); color: white; }
-        .quiz-option { cursor: pointer; background: rgba(255,255,255,0.1); padding: 10px; margin-bottom: 5px; border-radius: 5px; transition: background 0.3s; }
-        .quiz-option:hover { background: rgba(255,255,255,0.3); }
+        .quiz-option { cursor: pointer; background: rgba(255,255,255,0.15); padding: 10px; margin-bottom: 8px; border-radius: 6px; transition: 0.2s; border: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; }
+        .quiz-option:hover { background: rgba(255,255,255,0.3); transform: translateX(5px); }
         .buzon-card { border: 2px dashed var(--primary); background-color: #f8fbff; }
         .fav-book-item { background: white; border-radius: 8px; padding: 12px; border-left: 4px solid var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: 0.2s; margin-bottom: 10px; }
         .fav-book-item:hover { transform: translateX(5px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        footer { background-color: var(--primary); color: white; padding: 3rem 0; font-size: 0.85rem; border-top: 5px solid var(--accent); }
         
+        .cat-header { background: linear-gradient(90deg, var(--primary) 0%, #004a99 100%); color: white !important; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; padding: 10px 15px; border-radius: 4px; }
+        tr.sep-row td { padding-top: 15px !important; border: none; }
+        
+        /* Modal & Accordion Styles */
+        .modal-header { background-color: var(--primary); color: white; }
+        .modal-title { font-weight: bold; font-family: 'Montserrat', sans-serif; }
+        .btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
+        .result-box { background: #e8f4fd; border-left: 5px solid var(--primary); padding: 15px; margin-top: 15px; font-weight: bold; border-radius: 5px; text-align: center; }
+        
+        .accordion-button { padding: 10px 15px; font-size: 0.9rem; font-weight: bold; color: var(--primary); background-color: #f8f9fa; }
+        .accordion-button:not(.collapsed) { color: white; background-color: var(--primary); box-shadow: none; }
+        .accordion-body { padding: 10px; font-size: 0.85rem; background-color: #fff; }
+        .plant-item { border-bottom: 1px dashed #eee; padding: 8px 0; }
+        .plant-item:last-child { border-bottom: none; }
+
+        footer { background-color: var(--primary); color: white; padding: 3rem 0; font-size: 0.85rem; border-top: 5px solid var(--accent); }
+        .hover-link:hover { color: var(--accent) !important; text-decoration: underline !important; }
+
         /* Chat IA Styles */
         .chat-msg-user { text-align: right; margin-bottom: 10px; }
         .chat-msg-user span { background-color: var(--primary); color: white; padding: 8px 12px; border-radius: 15px 15px 0 15px; display: inline-block; }
@@ -79,7 +96,7 @@
     <div id="app-view">
         <nav class="navbar navbar-dark navbar-custom mb-4 sticky-top">
             <div class="container">
-                <a class="navbar-brand fw-bold" href="#"><i class="fas fa-laptop-medical me-2"></i>Plataforma Estudiantil</a>
+                <a class="navbar-brand fw-bold d-flex align-items-center" href="#"><i class="fas fa-laptop-medical me-2"></i><div>Plataforma Estudiantil<br><span class="small fw-normal" style="font-size: 0.65rem; opacity: 0.8;">Construida por Comité Médico Cirujano UNICH 2025 - 2026</span></div></a>
                 <div class="d-flex align-items-center">
                     <button class="btn btn-sm btn-light text-primary me-2 fw-bold rounded-pill px-3" onclick="abrirIA()"><i class="fas fa-brain me-1"></i>Dr. Evidence</button>
                     <button class="btn btn-sm btn-outline-light" onclick="logout()" title="Cerrar Sesión"><i class="fas fa-sign-out-alt"></i></button>
@@ -148,142 +165,134 @@
                     <div class="row g-4">
                         
                         <div class="col-md-12">
-                            <div class="card p-3 shadow-sm border-0 tool-card">
-                                <h5 class="fw-bold text-primary mb-3"><i class="fas fa-calculator me-2"></i>Calculadora Médica 2.0</h5>
-                                
-                                <div class="row align-items-end mb-4">
-                                    <div class="col-md-6">
-                                        <label class="fw-bold small text-muted">Peso del Paciente (kg)</label>
+                            <div class="card p-4 shadow-sm border-0 tool-card">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="fw-bold text-primary m-0"><i class="fas fa-calculator me-2"></i>Calculadora Médica</h5>
+                                    <span class="badge bg-light text-muted border">v1.0</span>
+                                </div>
+                                <div class="row g-3 align-items-end mb-4">
+                                    <div class="col-md-4">
+                                        <label class="fw-bold small text-muted">1. Peso (kg)</label>
                                         <input type="number" id="pesoCalc" class="form-control form-control-lg border-primary" placeholder="Ej: 20">
                                     </div>
-                                    <div class="col-md-6 mt-2 mt-md-0">
-                                        <button class="btn btn-primary w-100 btn-lg fw-bold" onclick="calcularTodo()"><i class="fas fa-bolt me-2"></i>CALCULAR DOSIS</button>
+                                    <div class="col-md-4">
+                                        <label class="fw-bold small text-muted">2. Paciente</label>
+                                        <select id="tipoPaciente" class="form-select form-select-lg border-primary fw-bold text-primary">
+                                            <option value="ped" selected>👶 Pediátrico</option>
+                                            <option value="adu">👤 Adulto / General</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="btn btn-primary w-100 btn-lg fw-bold" onclick="calcularTodo()"><i class="fas fa-bolt me-2"></i>CALCULAR</button>
                                     </div>
                                 </div>
-
                                 <div id="resultadosDosis" style="display:none;">
-                                    <div class="row g-0">
-                                        
-                                        <div class="col-md-6 pe-md-3 mb-4 mb-md-0">
-                                            <h6 class="text-white bg-success p-2 rounded fw-bold text-center mb-3"><i class="fas fa-child me-2"></i>PEDIATRÍA</h6>
-                                            <div class="table-responsive">
-                                                <table class="table table-sm table-borderless table-striped small">
-                                                    <tbody>
-                                                        <tr><td><strong>Paracetamol</strong></td><td class="text-end"><span class="badge bg-success" id="pedPara">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(10-15 mg/kg/dosis • c/6h)</td></tr>
-                                                        
-                                                        <tr><td><strong>Ibuprofeno</strong></td><td class="text-end"><span class="badge bg-success" id="pedIbu">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(10 mg/kg/dosis • c/8h)</td></tr>
-
-                                                        <tr><td><strong>Amoxicilina</strong></td><td class="text-end"><span class="badge bg-primary" id="pedAmox">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(50 mg/kg/día ÷ 3 dosis)</td></tr>
-
-                                                        <tr><td><strong>Salbutamol (Jbe)</strong></td><td class="text-end"><span class="badge bg-warning text-dark" id="pedSalb">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.1 mg/kg/dosis • c/8h)</td></tr>
-
-                                                        <tr><td><strong>Adrenalina (IM)</strong></td><td class="text-end"><span class="badge bg-danger" id="pedAdre">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.01 mg/kg/dosis • Max 0.3mg)</td></tr>
-
-                                                        <tr><td><strong>Ceftriaxona</strong></td><td class="text-end"><span class="badge bg-primary" id="pedCeft">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(50 mg/kg/día ÷ 2 dosis)</td></tr>
-
-                                                        <tr><td><strong>Diazepam (Rectal/IV)</strong></td><td class="text-end"><span class="badge bg-danger" id="pedDiaz">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.3 mg/kg/dosis • Crisis)</td></tr>
-
-                                                        <tr><td><strong>Midazolam</strong></td><td class="text-end"><span class="badge bg-danger" id="pedMida">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.15 mg/kg/dosis • Sedación)</td></tr>
-
-                                                        <tr><td><strong>Dexametasona</strong></td><td class="text-end"><span class="badge bg-info text-dark" id="pedDexa">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.6 mg/kg/dosis • Max 16mg)</td></tr>
-
-                                                        <tr><td><strong>Ondansetrón</strong></td><td class="text-end"><span class="badge bg-info text-dark" id="pedOnda">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.15 mg/kg/dosis • c/8h)</td></tr>
-
-                                                        <tr><td><strong>Loratadina</strong></td><td class="text-end"><span class="badge bg-secondary" id="pedLora">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(<30kg: 5mg • >30kg: 10mg / 24h)</td></tr>
-
-                                                        <tr><td><strong>Cetirizina</strong></td><td class="text-end"><span class="badge bg-secondary" id="pedCeti">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.25 mg/kg/día • c/12h-24h)</td></tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                    <div id="listaPediatria" style="display:none;">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-sm border-bottom align-middle">
+                                                <thead class="table-light"><tr><th>Fármaco</th><th class="text-end">Dosis Calc.</th></tr></thead>
+                                                <tbody>
+                                                    <tr class="sep-row"><td colspan="2" class="cat-header"><i class="fas fa-thermometer-half me-2"></i>Analgesia y Fiebre</td></tr>
+                                                    <tr><td><strong>Paracetamol</strong><br><small class="text-muted">(10-15 mg/kg • c/6h)</small></td><td class="text-end"><span class="badge bg-success fs-6" id="pedPara">...</span></td></tr>
+                                                    <tr><td><strong>Ibuprofeno</strong><br><small class="text-muted">(10 mg/kg • c/8h)</small></td><td class="text-end"><span class="badge bg-success fs-6" id="pedIbu">...</span></td></tr>
+                                                    <tr><td><strong>Metamizol</strong><br><small class="text-muted">(10-15 mg/kg • c/6-8h)</small></td><td class="text-end"><span class="badge bg-success fs-6" id="pedMeta">...</span></td></tr>
+                                                    <tr class="sep-row"><td colspan="2" class="cat-header"><i class="fas fa-bacteria me-2"></i>Antibióticos</td></tr>
+                                                    <tr><td><strong>Amoxicilina</strong><br><small class="text-muted">(50 mg/kg/día ÷ 3)</small></td><td class="text-end"><span class="badge bg-primary fs-6" id="pedAmox">...</span></td></tr>
+                                                    <tr><td><strong>Ceftriaxona</strong><br><small class="text-muted">(50 mg/kg/día ÷ 2)</small></td><td class="text-end"><span class="badge bg-primary fs-6" id="pedCeft">...</span></td></tr>
+                                                    <tr><td><strong>TMP/SMX</strong><br><small class="text-muted">(8 mg/kg/día TMP ÷ 2)</small></td><td class="text-end"><span class="badge bg-primary fs-6" id="pedTmp">...</span></td></tr>
+                                                    <tr><td><strong>Azitromicina</strong><br><small class="text-muted">(10 mg/kg/día • 24h)</small></td><td class="text-end"><span class="badge bg-primary fs-6" id="pedAzit">...</span></td></tr>
+                                                    <tr><td><strong>Cefalexina</strong><br><small class="text-muted">(50 mg/kg/día ÷ 4)</small></td><td class="text-end"><span class="badge bg-primary fs-6" id="pedCefa">...</span></td></tr>
+                                                    <tr class="sep-row"><td colspan="2" class="cat-header"><i class="fas fa-lungs me-2"></i>Respiratorio y Alergia</td></tr>
+                                                    <tr><td><strong>Salbutamol (Jbe)</strong><br><small class="text-muted">(0.1 mg/kg • c/8h)</small></td><td class="text-end"><span class="badge bg-warning text-dark fs-6" id="pedSalb">...</span></td></tr>
+                                                    <tr><td><strong>Ambroxol</strong><br><small class="text-muted">(1.5 mg/kg/día ÷ 3)</small></td><td class="text-end"><span class="badge bg-warning text-dark fs-6" id="pedAmbr">...</span></td></tr>
+                                                    <tr><td><strong>Loratadina</strong><br><small class="text-muted">(<30kg:5mg • >30kg:10mg)</small></td><td class="text-end"><span class="badge bg-secondary fs-6" id="pedLora">...</span></td></tr>
+                                                    <tr><td><strong>Cetirizina</strong><br><small class="text-muted">(0.25 mg/kg/día)</small></td><td class="text-end"><span class="badge bg-secondary fs-6" id="pedCeti">...</span></td></tr>
+                                                    <tr><td><strong>Prednisona</strong><br><small class="text-muted">(1 mg/kg/día • Crisis)</small></td><td class="text-end"><span class="badge bg-info text-dark fs-6" id="pedPred">...</span></td></tr>
+                                                    <tr><td><strong>Dexametasona</strong><br><small class="text-muted">(0.6 mg/kg • Max 16)</small></td><td class="text-end"><span class="badge bg-info text-dark fs-6" id="pedDexa">...</span></td></tr>
+                                                    <tr class="sep-row"><td colspan="2" class="cat-header"><i class="fas fa-ambulance me-2"></i>Urgencias y Gastro</td></tr>
+                                                    <tr><td><strong>Adrenalina (IM)</strong><br><small class="text-muted">(0.01 mg/kg • Max 0.3)</small></td><td class="text-end"><span class="badge bg-danger fs-6" id="pedAdre">...</span></td></tr>
+                                                    <tr><td><strong>Hidrocortisona (IV)</strong><br><small class="text-muted">(5 mg/kg/dosis • Crisis)</small></td><td class="text-end"><span class="badge bg-danger fs-6" id="pedHidro">...</span></td></tr>
+                                                    <tr><td><strong>Diazepam (IV)</strong><br><small class="text-muted">(0.3 mg/kg • Crisis)</small></td><td class="text-end"><span class="badge bg-danger fs-6" id="pedDiaz">...</span></td></tr>
+                                                    <tr><td><strong>Midazolam</strong><br><small class="text-muted">(0.15 mg/kg • Sedación)</small></td><td class="text-end"><span class="badge bg-danger fs-6" id="pedMida">...</span></td></tr>
+                                                    <tr><td><strong>Ondansetrón</strong><br><small class="text-muted">(0.15 mg/kg • c/8h)</small></td><td class="text-end"><span class="badge bg-info text-dark fs-6" id="pedOnda">...</span></td></tr>
+                                                    <tr><td><strong>Metoclopramida</strong><br><small class="text-muted">(0.15 mg/kg • c/8h)</small></td><td class="text-end"><span class="badge bg-info text-dark fs-6" id="pedMeto">...</span></td></tr>
+                                                </tbody>
+                                            </table>
                                         </div>
-
-                                        <div class="col-md-6 ps-md-3 border-start">
-                                            <h6 class="text-white bg-primary p-2 rounded fw-bold text-center mb-3"><i class="fas fa-user me-2"></i>ADULTOS / GENERAL</h6>
-                                            <div class="table-responsive">
-                                                <table class="table table-sm table-borderless table-striped small">
-                                                    <tbody>
-                                                        <tr><td class="text-primary fw-bold">Líquidos Basales</td><td class="text-end"><span class="badge bg-primary" id="aduLiq">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(35 ml/kg/día)</td></tr>
-
-                                                        <tr><td class="text-primary fw-bold">Insulina (TDD)</td><td class="text-end"><span class="badge bg-warning text-dark" id="aduIns">...</span></td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(0.5 UI/kg/día • Dosis Total)</td></tr>
-
-                                                        <tr><td>Metformina</td><td class="text-end fw-bold">850 mg</td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/12-24h • Dosis Inicial)</td></tr>
-
-                                                        <tr><td>Losartán</td><td class="text-end fw-bold">50 mg</td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/12-24h • Antihipertensivo)</td></tr>
-
-                                                        <tr><td>Enalapril</td><td class="text-end fw-bold">10 mg</td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/12h • Antihipertensivo)</td></tr>
-
-                                                        <tr><td>Omeprazol</td><td class="text-end fw-bold">20 - 40 mg</td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/24h • Ayuno)</td></tr>
-
-                                                        <tr><td>Atorvastatina</td><td class="text-end fw-bold">20 - 40 mg</td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/24h • Noche)</td></tr>
-
-                                                        <tr><td>Aspirina (AAS)</td><td class="text-end fw-bold">100 - 300 mg</td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(Protección vs IAM)</td></tr>
-
-                                                        <tr><td>Paracetamol</td><td class="text-end fw-bold">1 g</td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/8h • Max 4g/día)</td></tr>
-
-                                                        <tr><td>Ceftriaxona</td><td class="text-end fw-bold">1 - 2 g</td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/12-24h • IV)</td></tr>
-
-                                                        <tr><td>Ketorolaco</td><td class="text-end fw-bold">30 mg</td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/8h • IV/IM • Max 5 días)</td></tr>
-
-                                                        <tr><td>Diclofenaco</td><td class="text-end fw-bold">75 mg</td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(C/12h • IM)</td></tr>
-
-                                                        <tr><td>Salbutamol</td><td class="text-end fw-bold">2 Disparos</td></tr>
-                                                        <tr><td colspan="2" class="text-muted fst-italic" style="font-size:0.75rem;">(100mcg/dosis • Rescate)</td></tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                    </div>
+                                    <div id="listaAdultos" style="display:none;">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-sm border-bottom align-middle">
+                                                <thead class="table-light"><tr><th>Fármaco</th><th class="text-end">Dosis / Resultado</th></tr></thead>
+                                                <tbody>
+                                                    <tr class="sep-row"><td colspan="2" class="cat-header"><i class="fas fa-calculator me-2"></i>Cálculos por Peso</td></tr>
+                                                    <tr class="table-primary"><td><strong>💧 Líquidos Basales</strong><br><small class="text-muted">(35 ml/kg/día)</small></td><td class="text-end"><span class="badge bg-primary fs-6" id="aduLiq">...</span></td></tr>
+                                                    <tr class="table-warning"><td><strong>💉 Insulina (TDD)</strong><br><small class="text-muted">(0.5 UI/kg/día)</small></td><td class="text-end"><span class="badge bg-warning text-dark fs-6" id="aduIns">...</span></td></tr>
+                                                    <tr class="table-secondary"><td><strong>💊 Tramadol</strong><br><small class="text-muted">(1 mg/kg/dosis)</small></td><td class="text-end"><span class="badge bg-secondary fs-6" id="aduTram">...</span></td></tr>
+                                                    <tr class="table-secondary"><td><strong>💊 Enoxaparina</strong><br><small class="text-muted">(1 mg/kg/dosis Tx)</small></td><td class="text-end"><span class="badge bg-secondary fs-6" id="aduEnox">...</span></td></tr>
+                                                    <tr class="sep-row"><td colspan="2" class="cat-header"><i class="fas fa-heartbeat me-2"></i>Crónicos y Metabólicos</td></tr>
+                                                    <tr><td><strong>Metformina</strong><br><small class="text-muted">(C/12-24h • Inicial)</small></td><td class="text-end fw-bold">850 mg</td></tr>
+                                                    <tr><td><strong>Losartán</strong><br><small class="text-muted">(C/12-24h)</small></td><td class="text-end fw-bold">50 mg</td></tr>
+                                                    <tr><td><strong>Enalapril</strong><br><small class="text-muted">(C/12h)</small></td><td class="text-end fw-bold">10 mg</td></tr>
+                                                    <tr><td><strong>Amlodipino</strong><br><small class="text-muted">(C/24h)</small></td><td class="text-end fw-bold">5 mg</td></tr>
+                                                    <tr><td><strong>Atorvastatina</strong><br><small class="text-muted">(C/24h • Noche)</small></td><td class="text-end fw-bold">20-40 mg</td></tr>
+                                                    <tr><td><strong>Aspirina (AAS)</strong><br><small class="text-muted">(Protección IAM)</small></td><td class="text-end fw-bold">100 mg</td></tr>
+                                                    <tr class="sep-row"><td colspan="2" class="cat-header"><i class="fas fa-pills me-2"></i>Analgesia</td></tr>
+                                                    <tr><td><strong>Paracetamol</strong><br><small class="text-muted">(C/8h • Max 4g)</small></td><td class="text-end fw-bold">500 mg</td></tr>
+                                                    <tr><td><strong>Ketorolaco</strong><br><small class="text-muted">(C/8h • Max 5 días)</small></td><td class="text-end fw-bold">30 mg</td></tr>
+                                                    <tr><td><strong>Diclofenaco</strong><br><small class="text-muted">(C/12h • IM)</small></td><td class="text-end fw-bold">75 mg</td></tr>
+                                                    <tr><td><strong>Naproxeno</strong><br><small class="text-muted">(C/12h)</small></td><td class="text-end fw-bold">250-500 mg</td></tr>
+                                                    <tr><td><strong>Butilhioscina</strong><br><small class="text-muted">(C/8h • Cólico)</small></td><td class="text-end fw-bold">10-20 mg</td></tr>
+                                                    <tr class="sep-row"><td colspan="2" class="cat-header"><i class="fas fa-medkit me-2"></i>Antibióticos y Otros</td></tr>
+                                                    <tr><td><strong>Ceftriaxona</strong><br><small class="text-muted">(C/12-24h • IV)</small></td><td class="text-end fw-bold">1-2 g</td></tr>
+                                                    <tr><td><strong>Ciprofloxacino</strong><br><small class="text-muted">(C/12h)</small></td><td class="text-end fw-bold">500 mg</td></tr>
+                                                    <tr><td><strong>Amikacina</strong><br><small class="text-muted">(C/24h • IM)</small></td><td class="text-end fw-bold">1 g (Standard)</td></tr>
+                                                    <tr><td><strong>Omeprazol</strong><br><small class="text-muted">(C/24h • Ayuno)</small></td><td class="text-end fw-bold">20-40 mg</td></tr>
+                                                    <tr><td><strong>Metoclopramida</strong><br><small class="text-muted">(C/8h)</small></td><td class="text-end fw-bold">10 mg</td></tr>
+                                                    <tr><td><strong>Salbutamol</strong><br><small class="text-muted">(Rescate)</small></td><td class="text-end fw-bold">2 Disparos</td></tr>
+                                                    <tr><td><strong>Clorfenamina</strong><br><small class="text-muted">(C/8h)</small></td><td class="text-end fw-bold">4 mg</td></tr>
+                                                    <tr><td><strong>Furosemida</strong><br><small class="text-muted">(C/12-24h)</small></td><td class="text-end fw-bold">20-40 mg</td></tr>
+                                                </tbody>
+                                            </table>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-12">
-                            <div class="card quiz-card shadow border-0 p-3">
-                                <h6 class="fw-bold"><i class="fas fa-fire me-2"></i>Reto Clínico del Día</h6>
-                                <p class="small mb-2">Paciente 4 años, fiebre 5 días, lengua en fresa y adenopatía cervical. Dx:</p>
-                                <div class="quiz-option" onclick="alert('❌ Incorrecto. Escarlatina suele tener faringitis.')">A) Escarlatina</div>
-                                <div class="quiz-option" onclick="alert('✅ ¡Correcto! Kawasaki. Riesgo aneurismas.')">B) Enf. de Kawasaki</div>
-                                <div class="quiz-option" onclick="alert('❌ Incorrecto. Sarampión = Koplik.')">C) Sarampión</div>
+                            <div class="card quiz-card shadow border-0 p-3 h-100">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="fw-bold m-0"><i class="fas fa-fire me-2"></i>Reto ENARM del Día</h6>
+                                    <button class="btn btn-sm btn-light py-0 fw-bold border-0" style="font-size:0.75rem; background: rgba(255,255,255,0.2); color:white;" onclick="cargarReto()">🔄 Otra</button>
+                                </div>
+                                <div id="quizContainer"></div>
                             </div>
                         </div>
                         
                         <div class="col-md-12">
                             <div class="card p-3 shadow-sm border-0 tool-card">
-                                <h6 class="fw-bold text-dark mb-3"><i class="fas fa-ruler-combined me-2"></i>Escalas de Guardia</h6>
+                                <h6 class="fw-bold text-dark mb-3"><i class="fas fa-ruler-combined me-2"></i>Escalas de Guardia (Interactivas)</h6>
                                 <div class="row g-2">
-                                    <div class="col-md-4">
-                                        <button class="btn btn-outline-secondary w-100 text-start" onclick="alert('GLASGOW:\n\nOcular (4):\n4. Espontánea\n3. Orden\n2. Dolor\n1. No responde\n\nVerbal (5):\n5. Orientado\n4. Confuso\n3. Inapropiado\n2. Balbuceo\n1. Nada\n\nMotor (6):\n6. Obedece\n5. Localiza\n4. Retira\n3. Decorticación\n2. Descerebración\n1. Nada')"><i class="fas fa-brain me-2"></i>Glasgow</button>
+                                    <div class="col-md-3 col-6">
+                                        <button class="btn btn-outline-primary w-100 py-3 fw-bold" data-bs-toggle="modal" data-bs-target="#modalGlasgow">
+                                            <i class="fas fa-brain fa-2x mb-2 d-block"></i>Glasgow
+                                        </button>
                                     </div>
-                                    <div class="col-md-4">
-                                        <button class="btn btn-outline-secondary w-100 text-start" onclick="alert('APGAR (0-2 pts c/u):\n\nA: Apariencia (Color)\nP: Pulso (>100)\nG: Gesto (Estímulo)\nA: Actividad (Tono)\nR: Respiración (Llanto)')"><i class="fas fa-baby me-2"></i>APGAR</button>
+                                    <div class="col-md-3 col-6">
+                                        <button class="btn btn-outline-success w-100 py-3 fw-bold" data-bs-toggle="modal" data-bs-target="#modalSilverman">
+                                            <i class="fas fa-baby fa-2x mb-2 d-block"></i>Silverman
+                                        </button>
                                     </div>
-                                    <div class="col-md-4">
-                                        <button class="btn btn-outline-secondary w-100 text-start" onclick="alert('ALVARADO (Apendicitis):\n\nSíntomas:\n- Migración dolor (1)\n- Anorexia (1)\n- Náusea/Vómito (1)\n\nSignos:\n- Dolor CID (2)\n- Rebote + (1)\n- Fiebre (1)\n\nLab:\n- Leucocitosis (2)\n- Desviación Izq (1)')"><i class="fas fa-user-md me-2"></i>Alvarado</button>
+                                    <div class="col-md-3 col-6">
+                                        <button class="btn btn-outline-danger w-100 py-3 fw-bold" data-bs-toggle="modal" data-bs-target="#modalAlvarado">
+                                            <i class="fas fa-user-md fa-2x mb-2 d-block"></i>Alvarado
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <button class="btn btn-outline-warning text-dark w-100 py-3 fw-bold" data-bs-toggle="modal" data-bs-target="#modalObstetrica">
+                                            <i class="fas fa-female fa-2x mb-2 d-block"></i>FPP / SDG
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -294,24 +303,139 @@
 
                 <div class="tab-pane fade" id="tab-inter">
                     <div class="row g-3">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <div class="card p-3 shadow-sm border-0 h-100 tool-card">
                                 <h6 class="fw-bold text-primary">Auxiliar Tsotsil</h6>
                                 <select id="fraseSelect" class="form-select mb-3" onchange="traducir()">
                                     <option value="" selected>Frase...</option>
                                     <option value="1">Buenos días</option><option value="2">¿Dónde duele?</option>
                                 </select>
-                                <div class="alert alert-warning text-center fw-bold text-dark" id="traduccionBox">...</div>
+                                <div class="alert alert-primary text-center fw-bold text-dark" id="traduccionBox">...</div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        
+                        <div class="col-md-4">
                             <div class="card p-3 shadow-sm border-0 h-100 tool-card">
-                                <h6 class="fw-bold text-success">Fitoterapia</h6>
-                                <ul class="list-group list-group-flush small">
-                                    <li class="list-group-item"><strong>Manzanilla:</strong> Dolor estomacal.</li>
-                                    <li class="list-group-item"><strong>Jengibre:</strong> Náuseas.</li>
-                                    <li class="list-group-item"><strong>Guayaba:</strong> Diarrea.</li>
-                                </ul>
+                                <h6 class="fw-bold text-success">Auxiliar Tseltal</h6>
+                                <select id="fraseSelectTseltal" class="form-select mb-3" onchange="traducirTseltal()">
+                                    <option value="" selected>Frase...</option>
+                                    <option value="1">Buenos días</option>
+                                    <option value="2">¿De dónde eres?</option>
+                                    <option value="3">Gracias</option>
+                                </select>
+                                <div class="alert alert-success text-center fw-bold text-dark" id="traduccionBoxTseltal">...</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card p-3 shadow-sm border-0 h-100 tool-card">
+                                <h6 class="fw-bold text-warning text-dark mb-3"><i class="fas fa-leaf me-2"></i>Vademécum Herbolario</h6>
+                                
+                                <div class="accordion accordion-flush" id="fitoAccordion">
+                                    
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fitoDigestivo"><i class="fas fa-utensils me-2"></i>Digestivo</button></h2>
+                                        <div id="fitoDigestivo" class="accordion-collapse collapse" data-bs-parent="#fitoAccordion">
+                                            <div class="accordion-body">
+                                                <div class="plant-item">
+                                                    <strong>Guayaba (Hojas):</strong> Diarrea acuosa.<br>
+                                                    <span class="small text-muted">🍵 Decocción: 5-7 hojas en 1L agua. Tomar 3 veces al día.</span>
+                                                </div>
+                                                <div class="plant-item">
+                                                    <strong>Manzanilla:</strong> Cólico / Espasmo.<br>
+                                                    <span class="small text-muted">🍵 Infusión: 1 cda flores por taza. Tapar 5 min.</span>
+                                                </div>
+                                                <div class="plant-item">
+                                                    <strong>Jengibre:</strong> Náuseas / Vómito.<br>
+                                                    <span class="small text-muted">🍵 Infusión: 1 rodaja (2cm) o 1g polvo por taza.</span>
+                                                </div>
+                                                <div class="plant-item">
+                                                    <strong>Hierbabuena:</strong> Dispepsia / Gases.<br>
+                                                    <span class="small text-muted">🍵 Infusión: 1 rama fresca por taza después de comer.</span>
+                                                </div>
+                                                <div class="plant-item">
+                                                    <strong>Estafiate:</strong> Dolor intenso / Parásitos.<br>
+                                                    <span class="small text-muted">⚠️ Fuerte: Solo 1 ramita pequeña en 250ml. No exceder.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fitoResp"><i class="fas fa-lungs me-2"></i>Respiratorio</button></h2>
+                                        <div id="fitoResp" class="accordion-collapse collapse" data-bs-parent="#fitoAccordion">
+                                            <div class="accordion-body">
+                                                <div class="plant-item">
+                                                    <strong>Bugambilia (Morada):</strong> Tos seca.<br>
+                                                    <span class="small text-muted">🍵 Infusión: 5-10 flores lavadas por taza. Endulzar con miel.</span>
+                                                </div>
+                                                <div class="plant-item">
+                                                    <strong>Gordolobo:</strong> Tos con flemas / Expectorante.<br>
+                                                    <span class="small text-muted">🍵 Infusión: 1 pellizco de flores por taza. Colar bien (pelusa).</span>
+                                                </div>
+                                                <div class="plant-item">
+                                                    <strong>Eucalipto:</strong> Congestión nasal.<br>
+                                                    <span class="small text-muted">♨️ Vaporizaciones: 3-5 hojas en agua hirviendo. Inhalar vapor.</span>
+                                                </div>
+                                                <div class="plant-item">
+                                                    <strong>Sauco:</strong> Fiebre / Gripe.<br>
+                                                    <span class="small text-muted">🍵 Infusión: 1 cda de flores por taza (Sudorífico).</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fitoPiel"><i class="fas fa-hand-holding-medical me-2"></i>Piel y Trauma</button></h2>
+                                        <div id="fitoPiel" class="accordion-collapse collapse" data-bs-parent="#fitoAccordion">
+                                            <div class="accordion-body">
+                                                <div class="plant-item">
+                                                    <strong>Tepezcohuite:</strong> Quemaduras / Heridas.<br>
+                                                    <span class="small text-muted">🧴 Polvo directo lavado o pomada al 10%. Regenerador.</span>
+                                                </div>
+                                                <div class="plant-item">
+                                                    <strong>Árnica (Heterotheca):</strong> Golpes.<br>
+                                                    <span class="small text-muted">🩹 Compresas (Té externo) o Pomada. ⚠️ NO tomar (Hepatotóxico).</span>
+                                                </div>
+                                                <div class="plant-item">
+                                                    <strong>Sábila (Aloe):</strong> Quemadura solar.<br>
+                                                    <span class="small text-muted">🧴 Gel fresco directo (lavar el yodo amarillo primero).</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fitoSNC"><i class="fas fa-brain me-2"></i>SNC y Cultural</button></h2>
+                                        <div id="fitoSNC" class="accordion-collapse collapse" data-bs-parent="#fitoAccordion">
+                                            <div class="accordion-body">
+                                                <div class="plant-item">
+                                                    <strong>Valeriana:</strong> Insomnio / Ansiedad.<br>
+                                                    <span class="small text-muted">🍵 Decocción raíz (3g) o Tintura (20 gotas noche).</span>
+                                                </div>
+                                                <div class="plant-item">
+                                                    <strong>Pasiflora:</strong> Sedante suave.<br>
+                                                    <span class="small text-muted">🍵 Infusión hojas/tallo: 1 cda por taza.</span>
+                                                </div>
+                                                <div class="plant-item">
+                                                    <strong>Toronjil:</strong> "Susto" / Nervios.<br>
+                                                    <span class="small text-muted">🍵 Infusión (Té aromático): 1 rama por taza.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header"><button class="accordion-button collapsed bg-danger text-white" type="button" data-bs-toggle="collapse" data-bs-target="#fitoAlert"><i class="fas fa-exclamation-triangle me-2"></i>Precaución</button></h2>
+                                        <div id="fitoAlert" class="accordion-collapse collapse" data-bs-parent="#fitoAccordion">
+                                            <div class="accordion-body">
+                                                <div class="plant-item text-danger fw-bold">Ruda (Ruta graveolens):</div>
+                                                <div class="small text-muted">Uso cultural ("Aire" o "Limpias"), pero es <span class="text-danger fw-bold">ABORTIVA (Oxitócica)</span>. <br>⚠️ PROHIBIDA su ingesta en embarazo o sospecha. Tóxica en dosis altas.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -324,7 +448,7 @@
                                 <div class="text-center mb-4">
                                     <i class="fas fa-envelope-open-text fa-3x text-primary mb-2"></i>
                                     <h4 class="fw-bold">Buzón del Estudiante</h4>
-                                    <p class="text-muted small">Tu voz es importante. Identidad protegida si lo deseas.</p>
+                                    <p class="text-muted small">Tu voz es importante. Identidad protegida.</p>
                                 </div>
                                 <form id="formBuzon" onsubmit="event.preventDefault(); enviarSugerencia();">
                                     <div class="mb-3">
@@ -336,10 +460,6 @@
                                         </select>
                                     </div>
                                     <div class="mb-3"><textarea id="sugMsj" class="form-control" rows="4" placeholder="Mensaje..." required></textarea></div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="sugAnonimo">
-                                        <label class="form-check-label small text-muted" for="sugAnonimo">Enviar anónimo</label>
-                                    </div>
                                     <button type="submit" class="btn btn-primary w-100 fw-bold">ENVIAR</button>
                                 </form>
                             </div>
@@ -351,11 +471,92 @@
         
         <footer class="text-center mt-5">
             <div class="container">
-                <p class="mb-2 fw-bold text-white">Comité Estudiantil de la Lic. de Médico Cirujano UNICH</p>
-                <p class="text-white-50 extra-small">Plataforma independiente desarrollada por estudiantes.</p>
-                <div class="mt-3"><a href="mailto:comiteestudiantilmedicina@unich.edu.mx" class="text-warning fw-bold small text-decoration-none">Contacto y Soporte</a></div>
+                <p class="mb-1 fw-bold text-white">Comité Estudiantil de la Lic. de Médico Cirujano UNICH</p>
+                <p class="text-white-50 extra-small mb-2">Plataforma independiente desarrollada por estudiantes.</p>
+                <p class="text-warning small fw-bold mb-3" style="font-size: 0.8rem;">Construcción, Desarrollo y Arquitectura: Luis Daniel Aguilar</p>
+                <div class="mt-3">
+                    <a href="#" class="text-white-50 small text-decoration-none me-3 hover-link" onclick="alert('Disponible próximamente')">Aviso de Privacidad</a>
+                    <span class="text-white-50">|</span>
+                    <a href="#" class="text-white-50 small text-decoration-none ms-3 hover-link" onclick="alert('Disponible próximamente')">Tratamiento de datos personales</a>
+                </div>
             </div>
         </footer>
+    </div>
+
+    <div class="modal fade" id="modalGlasgow" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><h6 class="modal-title">Escala de Glasgow</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <label class="small fw-bold">Apertura Ocular (4)</label>
+                    <select id="g_ocular" class="form-select mb-2">
+                        <option value="4">4. Espontánea</option><option value="3">3. A la orden</option><option value="2">2. Al dolor</option><option value="1">1. Ninguna</option>
+                    </select>
+                    <label class="small fw-bold">Respuesta Verbal (5)</label>
+                    <select id="g_verbal" class="form-select mb-2">
+                        <option value="5">5. Orientado</option><option value="4">4. Confuso</option><option value="3">3. Palabras inapropiadas</option><option value="2">2. Sonidos incomprensibles</option><option value="1">1. Ninguna</option>
+                    </select>
+                    <label class="small fw-bold">Respuesta Motora (6)</label>
+                    <select id="g_motor" class="form-select mb-3">
+                        <option value="6">6. Obedece órdenes</option><option value="5">5. Localiza el dolor</option><option value="4">4. Retira al dolor</option><option value="3">3. Flexión anormal (Decorticación)</option><option value="2">2. Extensión anormal (Descerebración)</option><option value="1">1. Ninguna</option>
+                    </select>
+                    <button class="btn btn-primary w-100" onclick="calcGlasgow()">Calcular</button>
+                    <div id="resGlasgow" class="result-box d-none"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalSilverman" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success"><h6 class="modal-title">Silverman-Anderson (Dificultad Resp.)</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <small class="text-muted d-block mb-2">0 es Normal, 10 es Severo.</small>
+                    <div class="mb-2"><label class="small fw-bold">Movimientos Toraco-Abdominales</label><select id="s_mov" class="form-select"><option value="0">0. Rítmicos / Regulares</option><option value="1">1. Tórax inmóvil / Abdomen mueve</option><option value="2">2. Disociación (Sube y baja)</option></select></div>
+                    <div class="mb-2"><label class="small fw-bold">Tiraje Intercostal</label><select id="s_tir" class="form-select"><option value="0">0. Ausente</option><option value="1">1. Leve / Apenas visible</option><option value="2">2. Marcado / Intenso</option></select></div>
+                    <div class="mb-2"><label class="small fw-bold">Retracción Xifoidea</label><select id="s_ret" class="form-select"><option value="0">0. Ausente</option><option value="1">1. Leve</option><option value="2">2. Marcada</option></select></div>
+                    <div class="mb-2"><label class="small fw-bold">Aleteo Nasal</label><select id="s_ale" class="form-select"><option value="0">0. Ausente</option><option value="1">1. Mínimo</option><option value="2">2. Marcado</option></select></div>
+                    <div class="mb-3"><label class="small fw-bold">Quejido Espiratorio</label><select id="s_que" class="form-select"><option value="0">0. Ausente</option><option value="1">1. Audible con esteto</option><option value="2">2. Audible a distancia</option></select></div>
+                    <button class="btn btn-success w-100" onclick="calcSilverman()">Calcular</button>
+                    <div id="resSilverman" class="result-box d-none" style="border-color: var(--bs-success); background: #e8fdf5;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalAlvarado" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger"><h6 class="modal-title">Escala de Alvarado (Apendicitis)</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <div class="form-check mb-2"><input class="form-check-input alv-chk" type="checkbox" value="1" id="a1"><label class="form-check-label" for="a1">Migración del dolor (1)</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input alv-chk" type="checkbox" value="1" id="a2"><label class="form-check-label" for="a2">Anorexia (1)</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input alv-chk" type="checkbox" value="1" id="a3"><label class="form-check-label" for="a3">Náusea / Vómitos (1)</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input alv-chk" type="checkbox" value="2" id="a4"><label class="form-check-label fw-bold" for="a4">Dolor en C.I.D. (2)</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input alv-chk" type="checkbox" value="1" id="a5"><label class="form-check-label" for="a5">Rebote Positivo (Blumberg) (1)</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input alv-chk" type="checkbox" value="1" id="a6"><label class="form-check-label" for="a6">Fiebre > 37.3°C (1)</label></div>
+                    <div class="form-check mb-2"><input class="form-check-input alv-chk" type="checkbox" value="2" id="a7"><label class="form-check-label fw-bold" for="a7">Leucocitosis (2)</label></div>
+                    <div class="form-check mb-3"><input class="form-check-input alv-chk" type="checkbox" value="1" id="a8"><label class="form-check-label" for="a8">Desviación a la izquierda (Neutrofilia) (1)</label></div>
+                    <button class="btn btn-danger w-100" onclick="calcAlvarado()">Calcular Probabilidad</button>
+                    <div id="resAlvarado" class="result-box d-none" style="border-color: var(--bs-danger); background: #fde8e8;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalObstetrica" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark"><h6 class="modal-title">Calculadora Obstétrica</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <label class="fw-bold mb-2">Fecha Última Menstruación (FUM):</label>
+                    <input type="date" id="fumInput" class="form-control mb-3">
+                    <button class="btn btn-warning w-100 fw-bold" onclick="calcObstetrica()">Calcular FPP y Semanas</button>
+                    <div id="resObstetrica" class="result-box d-none" style="border-color: var(--bs-warning); background: #fffbe6; color: #333;"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" id="iaModal" tabindex="-1">
@@ -385,26 +586,24 @@
         const db = getFirestore(app);
         let currentUserData = null;
 
-        // AUTH LISTENER
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('login-view').style.display = 'none';
                 document.getElementById('app-view').style.display = 'block';
                 await cargarPerfil(user.uid);
                 cargarFavoritosNube(user.uid);
+                if(window.cargarReto) window.cargarReto(); 
             } else {
                 document.getElementById('login-view').style.display = 'flex';
                 document.getElementById('app-view').style.display = 'none';
             }
         });
 
-        // FUNCIONES GLOBALES FIREBASE (Window)
         window.login = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch (e) { document.getElementById('loginError').textContent="Error: Credenciales incorrectas."; document.getElementById('loginError').classList.remove('d-none'); } };
         window.registrar = async () => { try { const cred = await createUserWithEmailAndPassword(auth, document.getElementById('regEmail').value, document.getElementById('regPass').value); await setDoc(doc(db, "estudiantes", cred.user.uid), { nombre: document.getElementById('regName').value, semestre: document.getElementById('regSemestre').value, email: document.getElementById('regEmail').value }); } catch (e) { alert("Error: " + e.message); } };
         window.logout = () => signOut(auth);
         window.toggleRegister = () => { const l=document.getElementById('formLogin'), r=document.getElementById('formRegister'); l.style.display=l.style.display==='none'?'block':'none'; r.style.display=r.style.display==='none'?'block':'none'; };
 
-        // PERFIL + GÉNERO
         async function cargarPerfil(uid) {
             const snap = await getDoc(doc(db, "estudiantes", uid));
             if (snap.exists()) {
@@ -418,25 +617,23 @@
             }
         }
 
-        // BUZÓN
         window.enviarSugerencia = async () => {
             if(!auth.currentUser) return;
             const tipo = document.getElementById('sugTipo').value;
             const msj = document.getElementById('sugMsj').value;
-            const anonimo = document.getElementById('sugAnonimo').checked;
+            // SE ELIMINÓ LA LÓGICA DE ANÓNIMO
             if(!msj.trim()) { alert("Escribe un mensaje."); return; }
             try {
                 await addDoc(collection(db, "buzon"), {
                     tipo: tipo, mensaje: msj, fecha: new Date(),
-                    usuario: anonimo ? "Anónimo" : currentUserData.nombre,
-                    semestre: anonimo ? "N/A" : currentUserData.semestre,
+                    usuario: currentUserData.nombre, // SIEMPRE ENVÍA NOMBRE
+                    semestre: currentUserData.semestre, // SIEMPRE ENVÍA SEMESTRE
                     uid: auth.currentUser.uid
                 });
                 alert("¡Enviado! Gracias."); document.getElementById('formBuzon').reset();
             } catch(e) { alert("Error: " + e.message); }
         };
 
-        // FAVORITOS
         window.cargarFavoritosNube = async (uid) => {
             const container = document.getElementById('favoritos-container');
             container.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>';
@@ -453,50 +650,203 @@
     </script>
 
     <script>
-        // --- CALCULADORA (MODO ROBUSTO) ---
+        // --- FUNCIONES INTERCULTURALIDAD ---
+        window.traducir = function() {
+            const op = document.getElementById('fraseSelect').value;
+            const txt = op=='1'?"Lek oyoxuk":op=='2'?"¿Bu x-a'i k'ux?":"...";
+            document.getElementById('traduccionBox').textContent = txt;
+        };
+
+        window.traducirTseltal = function() {
+            const op = document.getElementById('fraseSelectTseltal').value;
+            let txt = "...";
+            if(op == '1') txt = "Bame ayat";
+            if(op == '2') txt = "Banti talemat";
+            if(op == '3') txt = "Wokolawal";
+            document.getElementById('traduccionBoxTseltal').textContent = txt;
+        };
+
+        // --- FUNCIONES PARA MODALES INTERACTIVOS ---
+        
+        window.calcGlasgow = function() {
+            const o = parseInt(document.getElementById('g_ocular').value);
+            const v = parseInt(document.getElementById('g_verbal').value);
+            const m = parseInt(document.getElementById('g_motor').value);
+            const total = o + v + m;
+            let desc = "";
+            if(total >= 13) desc = "Traumatismo Leve";
+            else if(total >= 9) desc = "Traumatismo Moderado";
+            else desc = "Traumatismo Severo (Intubación)";
+            
+            const box = document.getElementById('resGlasgow');
+            box.innerHTML = `${total} Puntos<br><span class="small fw-normal">${desc}</span>`;
+            box.classList.remove('d-none');
+        };
+
+        window.calcSilverman = function() {
+            const total = 
+                parseInt(document.getElementById('s_mov').value) +
+                parseInt(document.getElementById('s_tir').value) +
+                parseInt(document.getElementById('s_ret').value) +
+                parseInt(document.getElementById('s_ale').value) +
+                parseInt(document.getElementById('s_que').value);
+            
+            let desc = "";
+            if(total === 0) desc = "Sin dificultad respiratoria";
+            else if(total <= 3) desc = "Dificultad Leve";
+            else if(total <= 6) desc = "Dificultad Moderada";
+            else desc = "Dificultad Severa";
+
+            const box = document.getElementById('resSilverman');
+            box.innerHTML = `${total} Puntos<br><span class="small fw-normal">${desc}</span>`;
+            box.classList.remove('d-none');
+        };
+
+        window.calcAlvarado = function() {
+            let total = 0;
+            document.querySelectorAll('.alv-chk:checked').forEach(c => total += parseInt(c.value));
+            
+            let desc = "";
+            if(total <= 4) desc = "Baja probabilidad";
+            else if(total <= 6) desc = "Posible (Observación)";
+            else desc = "Alta probabilidad (Cirugía)";
+
+            const box = document.getElementById('resAlvarado');
+            box.innerHTML = `${total}/10 Puntos<br><span class="small fw-normal">${desc}</span>`;
+            box.classList.remove('d-none');
+        };
+
+        window.calcObstetrica = function() {
+            const fumStr = document.getElementById('fumInput').value;
+            if(!fumStr) return;
+            
+            const fum = new Date(fumStr);
+            const hoy = new Date();
+            
+            // FPP (Naegele: +7 días, -3 meses, +1 año aprox o +280 dias)
+            // Metodo simple: FUM + 280 dias
+            const fpp = new Date(fum);
+            fpp.setDate(fum.getDate() + 280);
+            
+            // Semanas (Diferencia en milisegundos)
+            const diffTime = Math.abs(hoy - fum);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            const semanas = Math.floor(diffDays / 7);
+            const dias = diffDays % 7;
+
+            const box = document.getElementById('resObstetrica');
+            box.innerHTML = `<strong>SDG:</strong> ${semanas}.${dias} semanas<br><strong>FPP:</strong> ${fpp.toLocaleDateString('es-ES')}`;
+            box.classList.remove('d-none');
+        };
+
+
+        // --- BANCO DE PREGUNTAS (30 High Yield) ---
+        const bancoPreguntas = [
+            { p: "¿Tratamiento de primera línea para la Enfermedad de Kawasaki?", a: ["Aspirina + IGIV", "Corticoides", "Antibióticos"], c: 0, why: "✅ Correcto. Previene aneurismas coronarios." },
+            { p: "¿Triada clásica del embarazo ectópico?", a: ["Dolor, Sangrado, Masa anexial", "Fiebre, Dolor, Leucorrea", "Sangrado, Hipertensión, Edema"], c: 0, why: "✅ Correcto. Dolor abdominal, amenorrea/sangrado y masa." },
+            { p: "¿Escala para diagnóstico de Apendicitis?", a: ["Alvarado", "Ranson", "Glasgow"], c: 0, why: "✅ Correcto. MANTRELS (Alvarado)." },
+            { p: "¿Criterio diagnóstico de Diabetes Mellitus (HbA1c)?", a: ["> 6.0%", "≥ 6.5%", "> 7.0%"], c: 1, why: "✅ Correcto. HbA1c mayor o igual a 6.5%." },
+            { p: "¿Qué evalúa la escala de Silverman-Anderson?", a: ["Dificultad respiratoria neonatal", "Vitalidad al nacer", "Edad gestacional"], c: 0, why: "✅ Correcto. A menor puntaje, mejor condición." },
+            { p: "¿Signo característico de la Colecistitis Aguda?", a: ["Murphy (+)", "McBurney (+)", "Rovsing (+)"], c: 0, why: "✅ Correcto. Cese de la inspiración a la palpación." },
+            { p: "¿Agente causal más frecuente de Mastitis Puerperal?", a: ["S. aureus", "E. coli", "Streptococcus B"], c: 0, why: "✅ Correcto. Staphylococcus aureus." },
+            { p: "¿Tratamiento erradicador de H. pylori?", a: ["Omeprazol + Claritro + Amoxi", "Metro + Cipro", "Solo Omeprazol"], c: 0, why: "✅ Correcto. Triple terapia estándar." },
+            { p: "¿Hernia inguinal que pasa por el anillo inguinal profundo?", a: ["Indirecta", "Directa", "Crural"], c: 0, why: "✅ Correcto. La indirecta es congénita (lateral)." },
+            { p: "¿Signo de Koplik es patognomónico de...?", a: ["Sarampión", "Rubeola", "Varicela"], c: 0, why: "✅ Correcto. Manchas blancas en mucosa oral." },
+            { p: "¿Causa más frecuente de sangrado posparto?", a: ["Atonía uterina", "Laceraciones", "Retención restos"], c: 0, why: "✅ Correcto. Las 4 T (Tono es la 1ra)." },
+            { p: "¿Clasificación para Neumonía Adquirida en Comunidad?", a: ["CURB-65", "GOLD", "NYHA"], c: 0, why: "✅ Correcto. Define ingreso hospitalario." },
+            { p: "¿Heces en 'jalea de grosella' sugiere...?", a: ["Invaginación intestinal", "Estenosis pilórica", "Apendicitis"], c: 0, why: "✅ Correcto. Urgencia pediátrica." },
+            { p: "¿Sangrado transvaginal indoloro en 3er trimestre?", a: ["Placenta Previa", "Desprendimiento", "Ruptura uterina"], c: 0, why: "✅ Correcto. No realizar tacto vaginal." },
+            { p: "¿Tratamiento de elección para Sífilis?", a: ["Penicilina G Benzatínica", "Ceftriaxona", "Azitromicina"], c: 0, why: "✅ Correcto. 2.4 Millones UI IM." },
+            { p: "¿Dosis tóxica de Paracetamol en adultos?", a: ["> 4g", "> 7.5 - 10g", "> 2g"], c: 1, why: "✅ Correcto. Riesgo de fallo hepático fulminante." },
+            { p: "¿Antídoto para intoxicación por Opioides?", a: ["Naloxona", "Flumazenil", "N-acetilcisteína"], c: 0, why: "✅ Correcto. Revierte depresión respiratoria." },
+            { p: "¿Gold Standard para diagnóstico de tuberculosis?", a: ["Cultivo", "Baciloscopía", "PPD"], c: 0, why: "✅ Correcto. El cultivo confirma." },
+            { p: "¿Vector del Dengue, Zika y Chikungunya?", a: ["Aedes aegypti", "Anopheles", "Lutzomyia"], c: 0, why: "✅ Correcto. El mosquito Aedes." },
+            { p: "¿Triada de Charcot (Colangitis)?", a: ["Fiebre, Ictericia, Dolor", "Fiebre, Tos, Disnea", "Dolor, Sangrado, Masa"], c: 0, why: "✅ Correcto. Si hay shock = Pentada de Reynolds." },
+            { p: "¿Principal causa de hipotiroidismo (zonas con yodo)?", a: ["Hashimoto", "Graves", "Tiroiditis viral"], c: 0, why: "✅ Correcto. Tiroiditis autoinmune." },
+            { p: "¿Medicamento de elección para crisis de ausencia?", a: ["Valproato / Etosuximida", "Carbamazepina", "Fenitoína"], c: 0, why: "✅ Correcto." },
+            { p: "¿Signo de la 'tecla' se ve en...?", a: ["Luxación Acromioclavicular", "Fractura de Colles", "Luxación de hombro"], c: 0, why: "✅ Correcto." },
+            { p: "¿Fármaco de rescate en crisis asmática?", a: ["SABA (Salbutamol)", "ICS (Budesonida)", "LABA"], c: 0, why: "✅ Correcto. Broncodilatador de acción corta." },
+            { p: "¿Maniobra para desobstrucción de vía aérea?", a: ["Heimlich", "Valsalva", "Leopold"], c: 0, why: "✅ Correcto." },
+            { p: "¿Fórmula para reposición hídrica en quemados?", a: ["Parkland", "Hollyday", "Brooke"], c: 0, why: "✅ Correcto. 4ml x kg x %SCQ." },
+            { p: "¿Antibiótico que causa 'Síndrome del niño gris'?", a: ["Cloranfenicol", "Amoxicilina", "Ceftriaxona"], c: 0, why: "✅ Correcto." },
+            { p: "¿Tratamiento de elección para Giardia lamblia?", a: ["Metronidazol", "Albendazol", "Pamoato"], c: 0, why: "✅ Correcto." },
+            { p: "¿Fractura más común en niños?", a: ["Tallo verde", "Espiral", "Conminuta"], c: 0, why: "✅ Correcto. Periostio grueso evita ruptura total." },
+            { p: "¿Deficiencia vitamínica que causa Pelagra?", a: ["B3 (Niacina)", "B1 (Tiamina)", "C (Ascórbico)"], c: 0, why: "✅ Correcto. Demencia, Dermatitis, Diarrea." }
+        ];
+
+        window.cargarReto = function() {
+            const container = document.getElementById('quizContainer');
+            const randomIdx = Math.floor(Math.random() * bancoPreguntas.length);
+            const q = bancoPreguntas[randomIdx];
+            
+            // LOGICA DE BARAJADO (SHUFFLE)
+            let opciones = q.a.map((texto, indice) => {
+                return { texto: texto, esCorrecta: indice === q.c };
+            });
+            opciones.sort(() => Math.random() - 0.5);
+
+            let html = `<p class="small mb-3 fw-bold">${q.p}</p>`;
+            opciones.forEach((opcion) => {
+                const accion = opcion.esCorrecta 
+                    ? `this.style.background='#d4edda'; this.style.borderColor='#c3e6cb'; this.innerHTML='${q.why}';` 
+                    : `this.style.background='#f8d7da'; this.style.borderColor='#f5c6cb'; this.innerText='❌ Incorrecto';`;
+                html += `<div class="quiz-option text-white" onclick="${accion}">${opcion.texto}</div>`;
+            });
+            container.innerHTML = html;
+        };
+
+        // --- CALCULADORA ---
         window.calcularTodo = function() {
             try {
                 const inputPeso = document.getElementById('pesoCalc');
-                if (!inputPeso) return;
+                const selectTipo = document.getElementById('tipoPaciente');
+                if (!inputPeso || !selectTipo) return;
+                
                 const peso = parseFloat(inputPeso.value);
+                const tipo = selectTipo.value; 
                 
                 if (!peso || peso <= 0) { alert("Por favor ingresa un peso válido."); return; }
 
-                // PEDIATRÍA
-                document.getElementById('pedPara').textContent = (peso * 15).toFixed(0) + " mg";
-                document.getElementById('pedIbu').textContent = (peso * 10).toFixed(0) + " mg";
-                document.getElementById('pedAmox').textContent = ((peso * 50)/3).toFixed(0) + " mg";
-                document.getElementById('pedSalb').textContent = (peso * 0.1).toFixed(2) + " mg";
-                
-                let adre = peso * 0.01; if(adre > 0.3) adre = 0.3; 
-                document.getElementById('pedAdre').textContent = adre.toFixed(2) + " mg";
-                
-                document.getElementById('pedCeft').textContent = ((peso * 50)/2).toFixed(0) + " mg";
-                document.getElementById('pedDiaz').textContent = (peso * 0.3).toFixed(1) + " mg";
-                document.getElementById('pedMida').textContent = (peso * 0.15).toFixed(1) + " mg";
-                
-                let dexa = peso * 0.6; if(dexa > 16) dexa = 16; 
-                document.getElementById('pedDexa').textContent = dexa.toFixed(1) + " mg";
-                
-                let onda = peso * 0.15; if(onda > 8) onda = 8; 
-                document.getElementById('pedOnda').textContent = onda.toFixed(1) + " mg";
-                
-                document.getElementById('pedLora').textContent = (peso < 30) ? "5 mg" : "10 mg";
-                document.getElementById('pedCeti').textContent = (peso * 0.25).toFixed(1) + " mg";
+                document.getElementById('listaPediatria').style.display = 'none';
+                document.getElementById('listaAdultos').style.display = 'none';
 
-                // ADULTOS
-                document.getElementById('aduLiq').textContent = (peso * 35).toFixed(0) + " ml/día";
-                document.getElementById('aduIns').textContent = (peso * 0.5).toFixed(0) + " UI";
-
-                // MOSTRAR
+                if (tipo === 'ped') {
+                    // PEDIATRÍA
+                    let para = peso * 15; document.getElementById('pedPara').textContent = (para > 500 ? "500 mg (TOPE)" : para.toFixed(0) + " mg");
+                    let ibu = peso * 10; document.getElementById('pedIbu').textContent = (ibu > 400 ? "400 mg (TOPE)" : ibu.toFixed(0) + " mg");
+                    let meta = peso * 10; document.getElementById('pedMeta').textContent = (meta > 1000 ? "1 g (TOPE)" : meta.toFixed(0) + " mg");
+                    let amoxDosis = (peso * 50) / 3; document.getElementById('pedAmox').textContent = (amoxDosis > 1000 ? "1 g (TOPE)" : amoxDosis.toFixed(0) + " mg");
+                    let cefDosis = (peso * 50) / 2; document.getElementById('pedCeft').textContent = (cefDosis > 1000 ? "1 g (TOPE)" : cefDosis.toFixed(0) + " mg");
+                    let tmpDosis = (peso * 8) / 2; document.getElementById('pedTmp').textContent = (tmpDosis > 160 ? "160 mg TMP (TOPE)" : tmpDosis.toFixed(0) + " mg TMP");
+                    let azit = peso * 10; document.getElementById('pedAzit').textContent = (azit > 500 ? "500 mg (TOPE)" : azit.toFixed(0) + " mg");
+                    let cefaDosis = (peso * 50) / 4; document.getElementById('pedCefa').textContent = (cefaDosis > 1000 ? "1 g (TOPE)" : cefaDosis.toFixed(0) + " mg");
+                    document.getElementById('pedSalb').textContent = (peso * 0.1).toFixed(2) + " mg";
+                    document.getElementById('pedAmbr').textContent = ((peso * 1.5)/3).toFixed(1) + " mg";
+                    document.getElementById('pedLora').textContent = (peso < 30) ? "5 mg" : "10 mg";
+                    document.getElementById('pedCeti').textContent = (peso * 0.25).toFixed(1) + " mg";
+                    let pred = peso * 1; document.getElementById('pedPred').textContent = (pred > 60 ? "60 mg (TOPE)" : pred.toFixed(0) + " mg");
+                    let dexa = peso * 0.6; if(dexa > 16) dexa = 16; document.getElementById('pedDexa').textContent = dexa.toFixed(1) + " mg";
+                    let adre = peso * 0.01; if(adre > 0.3) adre = 0.3; document.getElementById('pedAdre').textContent = adre.toFixed(2) + " mg";
+                    let hidro = peso * 5; document.getElementById('pedHidro').textContent = (hidro > 200 ? "200 mg (TOPE)" : hidro.toFixed(0) + " mg");
+                    let diaz = peso * 0.3; document.getElementById('pedDiaz').textContent = (diaz > 10 ? "10 mg (TOPE)" : diaz.toFixed(1) + " mg");
+                    let mida = peso * 0.15; document.getElementById('pedMida').textContent = (mida > 5 ? "5 mg (TOPE)" : mida.toFixed(1) + " mg");
+                    let onda = peso * 0.15; if(onda > 8) onda = 8; document.getElementById('pedOnda').textContent = onda.toFixed(1) + " mg";
+                    let meto = peso * 0.15; document.getElementById('pedMeto').textContent = (meto > 10 ? "10 mg (TOPE)" : meto.toFixed(1) + " mg");
+                    document.getElementById('listaPediatria').style.display = 'block';
+                } else {
+                    // ADULTOS
+                    document.getElementById('aduLiq').textContent = (peso * 35).toFixed(0) + " ml/día";
+                    document.getElementById('aduIns').textContent = (peso * 0.5).toFixed(0) + " UI";
+                    let tram = peso * 1; document.getElementById('aduTram').textContent = (tram > 100 ? "100 mg (TOPE)" : tram.toFixed(0) + " mg");
+                    let enox = peso * 1; document.getElementById('aduEnox').textContent = (enox > 100 ? "100 mg (TOPE)" : enox.toFixed(0) + " mg");
+                    document.getElementById('listaAdultos').style.display = 'block';
+                }
                 const res = document.getElementById('resultadosDosis');
                 res.style.display = 'block';
                 res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
             } catch (e) { alert("Error: " + e.message); }
         };
 
-        // UI & IA
         window.traducir = function() {
             const op = document.getElementById('fraseSelect').value;
             const txt = op=='1'?"Lek oyoxuk":op=='2'?"¿Bu x-a'i k'ux?":"...";
