@@ -621,7 +621,6 @@
             if(!auth.currentUser) return;
             const tipo = document.getElementById('sugTipo').value;
             const msj = document.getElementById('sugMsj').value;
-            // SE ELIMINÓ LA LÓGICA DE ANÓNIMO
             if(!msj.trim()) { alert("Escribe un mensaje."); return; }
             try {
                 await addDoc(collection(db, "buzon"), {
@@ -649,7 +648,13 @@
         window.eliminarFavoritoNube = async (docId) => { if(confirm("¿Quitar de favoritos?")) { try { await deleteDoc(doc(db, "favoritos", docId)); if(auth.currentUser) cargarFavoritosNube(auth.currentUser.uid); } catch(e) { alert("Error."); } } }
     </script>
 
-    <script>
+   <script>
+        // 1. CONFIGURACIÓN DE IA (Dr. Evidence)
+        // ---------------------------------------------------------
+        // Ya puse su llave aquí. Si en el futuro la cambia, solo edite lo que está entre comillas.
+        const GROQ_API_KEY = "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"; 
+        // ---------------------------------------------------------
+
         // --- FUNCIONES INTERCULTURALIDAD ---
         window.traducir = function() {
             const op = document.getElementById('fraseSelect').value;
@@ -667,7 +672,6 @@
         };
 
         // --- FUNCIONES PARA MODALES INTERACTIVOS ---
-        
         window.calcGlasgow = function() {
             const o = parseInt(document.getElementById('g_ocular').value);
             const v = parseInt(document.getElementById('g_verbal').value);
@@ -677,26 +681,18 @@
             if(total >= 13) desc = "Traumatismo Leve";
             else if(total >= 9) desc = "Traumatismo Moderado";
             else desc = "Traumatismo Severo (Intubación)";
-            
             const box = document.getElementById('resGlasgow');
             box.innerHTML = `${total} Puntos<br><span class="small fw-normal">${desc}</span>`;
             box.classList.remove('d-none');
         };
 
         window.calcSilverman = function() {
-            const total = 
-                parseInt(document.getElementById('s_mov').value) +
-                parseInt(document.getElementById('s_tir').value) +
-                parseInt(document.getElementById('s_ret').value) +
-                parseInt(document.getElementById('s_ale').value) +
-                parseInt(document.getElementById('s_que').value);
-            
+            const total = parseInt(document.getElementById('s_mov').value) + parseInt(document.getElementById('s_tir').value) + parseInt(document.getElementById('s_ret').value) + parseInt(document.getElementById('s_ale').value) + parseInt(document.getElementById('s_que').value);
             let desc = "";
             if(total === 0) desc = "Sin dificultad respiratoria";
             else if(total <= 3) desc = "Dificultad Leve";
             else if(total <= 6) desc = "Dificultad Moderada";
             else desc = "Dificultad Severa";
-
             const box = document.getElementById('resSilverman');
             box.innerHTML = `${total} Puntos<br><span class="small fw-normal">${desc}</span>`;
             box.classList.remove('d-none');
@@ -705,12 +701,10 @@
         window.calcAlvarado = function() {
             let total = 0;
             document.querySelectorAll('.alv-chk:checked').forEach(c => total += parseInt(c.value));
-            
             let desc = "";
             if(total <= 4) desc = "Baja probabilidad";
             else if(total <= 6) desc = "Posible (Observación)";
             else desc = "Alta probabilidad (Cirugía)";
-
             const box = document.getElementById('resAlvarado');
             box.innerHTML = `${total}/10 Puntos<br><span class="small fw-normal">${desc}</span>`;
             box.classList.remove('d-none');
@@ -719,26 +713,18 @@
         window.calcObstetrica = function() {
             const fumStr = document.getElementById('fumInput').value;
             if(!fumStr) return;
-            
             const fum = new Date(fumStr);
             const hoy = new Date();
-            
-            // FPP (Naegele: +7 días, -3 meses, +1 año aprox o +280 dias)
-            // Metodo simple: FUM + 280 dias
             const fpp = new Date(fum);
             fpp.setDate(fum.getDate() + 280);
-            
-            // Semanas (Diferencia en milisegundos)
             const diffTime = Math.abs(hoy - fum);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
             const semanas = Math.floor(diffDays / 7);
             const dias = diffDays % 7;
-
             const box = document.getElementById('resObstetrica');
             box.innerHTML = `<strong>SDG:</strong> ${semanas}.${dias} semanas<br><strong>FPP:</strong> ${fpp.toLocaleDateString('es-ES')}`;
             box.classList.remove('d-none');
         };
-
 
         // --- BANCO DE PREGUNTAS (30 High Yield) ---
         const bancoPreguntas = [
@@ -778,18 +764,11 @@
             const container = document.getElementById('quizContainer');
             const randomIdx = Math.floor(Math.random() * bancoPreguntas.length);
             const q = bancoPreguntas[randomIdx];
-            
-            // LOGICA DE BARAJADO (SHUFFLE)
-            let opciones = q.a.map((texto, indice) => {
-                return { texto: texto, esCorrecta: indice === q.c };
-            });
+            let opciones = q.a.map((texto, indice) => { return { texto: texto, esCorrecta: indice === q.c }; });
             opciones.sort(() => Math.random() - 0.5);
-
             let html = `<p class="small mb-3 fw-bold">${q.p}</p>`;
             opciones.forEach((opcion) => {
-                const accion = opcion.esCorrecta 
-                    ? `this.style.background='#d4edda'; this.style.borderColor='#c3e6cb'; this.innerHTML='${q.why}';` 
-                    : `this.style.background='#f8d7da'; this.style.borderColor='#f5c6cb'; this.innerText='❌ Incorrecto';`;
+                const accion = opcion.esCorrecta ? `this.style.background='#d4edda'; this.style.borderColor='#c3e6cb'; this.innerHTML='${q.why}';` : `this.style.background='#f8d7da'; this.style.borderColor='#f5c6cb'; this.innerText='❌ Incorrecto';`;
                 html += `<div class="quiz-option text-white" onclick="${accion}">${opcion.texto}</div>`;
             });
             container.innerHTML = html;
@@ -801,17 +780,12 @@
                 const inputPeso = document.getElementById('pesoCalc');
                 const selectTipo = document.getElementById('tipoPaciente');
                 if (!inputPeso || !selectTipo) return;
-                
                 const peso = parseFloat(inputPeso.value);
                 const tipo = selectTipo.value; 
-                
                 if (!peso || peso <= 0) { alert("Por favor ingresa un peso válido."); return; }
-
                 document.getElementById('listaPediatria').style.display = 'none';
                 document.getElementById('listaAdultos').style.display = 'none';
-
                 if (tipo === 'ped') {
-                    // PEDIATRÍA
                     let para = peso * 15; document.getElementById('pedPara').textContent = (para > 500 ? "500 mg (TOPE)" : para.toFixed(0) + " mg");
                     let ibu = peso * 10; document.getElementById('pedIbu').textContent = (ibu > 400 ? "400 mg (TOPE)" : ibu.toFixed(0) + " mg");
                     let meta = peso * 10; document.getElementById('pedMeta').textContent = (meta > 1000 ? "1 g (TOPE)" : meta.toFixed(0) + " mg");
@@ -834,7 +808,6 @@
                     let meto = peso * 0.15; document.getElementById('pedMeto').textContent = (meto > 10 ? "10 mg (TOPE)" : meto.toFixed(1) + " mg");
                     document.getElementById('listaPediatria').style.display = 'block';
                 } else {
-                    // ADULTOS
                     document.getElementById('aduLiq').textContent = (peso * 35).toFixed(0) + " ml/día";
                     document.getElementById('aduIns').textContent = (peso * 0.5).toFixed(0) + " UI";
                     let tram = peso * 1; document.getElementById('aduTram').textContent = (tram > 100 ? "100 mg (TOPE)" : tram.toFixed(0) + " mg");
@@ -847,30 +820,39 @@
             } catch (e) { alert("Error: " + e.message); }
         };
 
-        window.traducir = function() {
-            const op = document.getElementById('fraseSelect').value;
-            const txt = op=='1'?"Lek oyoxuk":op=='2'?"¿Bu x-a'i k'ux?":"...";
-            document.getElementById('traduccionBox').textContent = txt;
+        // --- FUNCIONES IA (BLINDADA) ---
+        window.abrirIA = function() { 
+            new bootstrap.Modal(document.getElementById('iaModal')).show(); 
         };
-
-        const GROQ_API_KEY = "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"; 
-        window.abrirIA = function() { new bootstrap.Modal(document.getElementById('iaModal')).show(); };
+        
         window.consultarIA = async function() {
             const i = document.getElementById('iaQuery'), c = document.getElementById('chatHistory'), p = i.value.trim();
             if(!p) return;
             c.innerHTML += `<div class="chat-msg-user"><span>${p}</span></div>`; i.value = ''; c.scrollTop = c.scrollHeight;
-            const lid = "l"+Date.now(); c.innerHTML += `<div id="${lid}" class="text-muted small"><i class="fas fa-spinner fa-spin"></i> ...</div>`;
+            const lid = "l"+Date.now(); c.innerHTML += `<div id="${lid}" class="text-muted small"><i class="fas fa-spinner fa-spin"></i> Consultando a Dr. Evidence...</div>`;
             try {
                 const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                     method: "POST", headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
-                    body: JSON.stringify({ model: "llama3-70b-8192", messages: [{role:"system",content:"Eres Dr. Evidence."}, {role:"user",content:p}] })
+                    body: JSON.stringify({ 
+                        model: "llama-3.3-70b-versatile", // MODELO NUEVO Y ESTABLE
+                        messages: [{role:"system",content:"Eres Dr. Evidence, un asistente médico experto, conciso y basado en guías clínicas (GPC). Responde en español."}, {role:"user",content:p}],
+                        temperature: 0.5
+                    })
                 });
+                
+                if (!r.ok) throw new Error(`Error API: ${r.status}`);
+                
                 const d = await r.json(); document.getElementById(lid).remove();
-                if(d.choices) {
+                if(d.choices && d.choices.length > 0) {
                     const t = d.choices[0].message.content.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
                     c.innerHTML += `<div class="chat-msg-ai"><div>${t}</div></div>`;
+                } else {
+                    c.innerHTML += `<div class="text-danger small">Dr. Evidence no pudo formular una respuesta.</div>`;
                 }
-            } catch(e) { document.getElementById(lid).innerHTML = "Error."; }
+            } catch(e) { 
+                document.getElementById(lid).innerHTML = `<span class="text-danger">Error de conexión con la IA. Verifique su API Key.</span>`; 
+                console.error(e);
+            }
             c.scrollTop = c.scrollHeight;
         };
     </script>
